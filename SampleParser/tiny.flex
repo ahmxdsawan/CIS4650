@@ -86,8 +86,13 @@ number = {digit}+
    Z, a and z, or an underscore followed by zero or more letters
    between A and Z, a and z, zero and nine, or an underscore. */
 letter = [a-zA-Z]
-identifier = {letter}+
+// identifier = {letter}+
    
+identifier = [_a-zA-Z][_a-zA-Z0-9]*
+TRUTH = false | true
+
+comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
+
 %%
 /* ------------------------Lexical Rules Section---------------------- */
    
@@ -95,19 +100,30 @@ identifier = {letter}+
    This section contains regular expressions and actions, i.e. Java
    code, that will be executed when the scanner matches the associated
    regular expression. */
-   
+
 "if"               { return symbol(sym.IF); }
-"then"             { return symbol(sym.THEN); }
 "else"             { return symbol(sym.ELSE); }
-"end"              { return symbol(sym.END); }
-"repeat"           { return symbol(sym.REPEAT); }
-"until"            { return symbol(sym.UNTIL); }
-"read"             { return symbol(sym.READ); }
-"write"            { return symbol(sym.WRITE); }
-":="               { return symbol(sym.ASSIGN); }
-"="                { return symbol(sym.EQ); }
+"bool"             { return symbol(sym.BOOL); }
+"int"             { return symbol(sym.INT); }
+"return"           { return symbol(sym.RETURN); }
+"void"             { return symbol(sym.VOID); }
+"while"             { return symbol(sym.WHILE); }
+"true"             { return symbol(sym.TRUE); }
+"false"             { return symbol(sym.FALSE); }
+"="                { return symbol(sym.ASSIGN); }
 "<"                { return symbol(sym.LT); }
 ">"                { return symbol(sym.GT); }
+"<="                { return symbol(sym.LTE); }
+">="                { return symbol(sym.GTE); }
+"=="                { return symbol(sym.EQ); }
+"!="                { return symbol(sym.NEQ); }
+"~"                { return symbol(sym.NOT); }
+"||"                { return symbol(sym.OR); }
+"&&"                { return symbol(sym.AND); }
+"["                { return symbol(sym.LBRACKET); }
+"]"                { return symbol(sym.RBRACKET); }
+"{"                { return symbol(sym.LBRACE); }
+"}"                { return symbol(sym.RBRACE); }
 "+"                { return symbol(sym.PLUS); }
 "-"                { return symbol(sym.MINUS); }
 "*"                { return symbol(sym.TIMES); }
@@ -115,8 +131,9 @@ identifier = {letter}+
 "("                { return symbol(sym.LPAREN); }
 ")"                { return symbol(sym.RPAREN); }
 ";"                { return symbol(sym.SEMI); }
+","                { return symbol(sym.COMMA); }
 {number}           { return symbol(sym.NUM, yytext()); }
 {identifier}       { return symbol(sym.ID, yytext()); }
 {WhiteSpace}+      { /* skip whitespace */ }   
-"{"[^\}]*"}"       { /* skip comments */ }
+{comment}          { /* skip comments */ }
 .                  { return symbol(sym.ERROR); }
