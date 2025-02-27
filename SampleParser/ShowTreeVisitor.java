@@ -227,4 +227,9 @@ public class ShowTreeVisitor implements AbsynVisitor {
     System.out.println("NilExp");
   }
 
+  public void visit(BoolExp exp, int level) {
+    indent(level);
+    System.out.println("BoolExp");
+  }
+
 }

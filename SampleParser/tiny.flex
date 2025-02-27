@@ -85,11 +85,11 @@ number = {digit}+
 /* A identifier integer is a word beginning a letter between A and
    Z, a and z, or an underscore followed by zero or more letters
    between A and Z, a and z, zero and nine, or an underscore. */
-letter = [a-zA-Z]
+// letter = [a-zA-Z]
 // identifier = {letter}+
    
 identifier = [_a-zA-Z][_a-zA-Z0-9]*
-TRUTH = false | true
+// TRUTH = false | true
 
 comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 
@@ -108,8 +108,8 @@ comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 "return"           { return symbol(sym.RETURN); }
 "void"             { return symbol(sym.VOID); }
 "while"             { return symbol(sym.WHILE); }
-"true"             { return symbol(sym.TRUE); }
-"false"             { return symbol(sym.FALSE); }
+"true"             { return symbol(sym.TRUTH); }
+"false"             { return symbol(sym.TRUTH); }
 "="                { return symbol(sym.ASSIGN); }
 "<"                { return symbol(sym.LT); }
 ">"                { return symbol(sym.GT); }

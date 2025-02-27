@@ -1,10 +1,11 @@
 package absyn;
 
 public class AssignExp extends Exp {
-  public VarExp lhs;
+  // public VarExp lhs;
+  public Exp lhs;
   public Exp rhs;
 
-  public AssignExp( int row, int col, VarExp lhs, Exp rhs ) {
+  public AssignExp( int row, int col, Exp lhs, Exp rhs ) {
     this.row = row;
     this.col = col;
     this.lhs = lhs;

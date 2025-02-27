@@ -69,8 +69,8 @@ parser code {:
 :};
 
 terminal BOOL, ELSE, IF, INT, RETURN, VOID, WHILE;
-terminal PLUS, MINUS, TIMES, DIVIDE, LT, GT, LTE, GTE, EQ;
-terminal NEQ, ASSIGN, NOT, OR, AND, OVER, TRUE, FALSE;
+terminal PLUS, MINUS, TIMES, LT, GT, LTE, GTE, EQ;
+terminal NEQ, ASSIGN, NOT, OR, AND, OVER;
 terminal SEMI, LPAREN, RPAREN, COMMA, LBRACKET, RBRACKET, LBRACE, RBRACE;
 terminal String ID, NUM;
 terminal Boolean TRUTH;
@@ -87,14 +87,13 @@ non terminal VarDecList local_decls;
 non terminal ExpList stmt_list;
 non terminal Exp stmt, expr_stmt, select_stmt, iter_stmt, return_stmt;
 non terminal Exp expr, var, obool_expr, abool_expr, ubool_expr, simple_expr;
-non terminal Integer relop, addop, mulop;
 non terminal Exp term, signed_factor, factor, call;
 non terminal ExpList args, arg_list;
 
 precedence nonassoc ELSE;
 precedence nonassoc EQ, NEQ, LT, LTE, GT, GTE;
 precedence left PLUS, MINUS;
-precedence left TIMES, DIVIDE;
+precedence left TIMES, OVER;
 precedence right NOT;
 precedence left OR;
 precedence left AND;
@@ -306,16 +305,16 @@ ubool_expr  ::= NOT:n ubool_expr:u
 /* (24) <simple-expression> -> <additive-expression> <relop> <additive-expression> | <additive-expression> */
 simple_expr ::= simple_expr:s1 LT:op simple_expr:s2
                 {: RESULT = new OpExp(opleft, opright, s1, OpExp.LT, s2); :}
-              | simple_expr:s1 LE:op simple_expr:s2
-                {: RESULT = new OpExp(opleft, opright, s1, OpExp.LE, s2); :}
+              | simple_expr:s1 LTE:op simple_expr:s2
+                {: RESULT = new OpExp(opleft, opright, s1, OpExp.LTE, s2); :}
               | simple_expr:s1 GT:op simple_expr:s2
                 {: RESULT = new OpExp(opleft, opright, s1, OpExp.GT, s2); :}
-              | simple_expr:s1 GE:op simple_expr:s2
-                {: RESULT = new OpExp(opleft, opright, s1, OpExp.GE, s2); :}
+              | simple_expr:s1 GTE:op simple_expr:s2
+                {: RESULT = new OpExp(opleft, opright, s1, OpExp.GTE, s2); :}
               | simple_expr:s1 EQ:op simple_expr:s2
                 {: RESULT = new OpExp(opleft, opright, s1, OpExp.EQ, s2); :}
-              | simple_expr:s1 NE:op simple_expr:s2
-                {: RESULT = new OpExp(opleft, opright, s1, OpExp.NE, s2); :}
+              | simple_expr:s1 NEQ:op simple_expr:s2
+                {: RESULT = new OpExp(opleft, opright, s1, OpExp.NEQ, s2); :}
               | term:t
                 {: RESULT = t; :}
               ;
@@ -332,7 +331,7 @@ term        ::= term:t PLUS:op factor:f
 /* (28-29) <term> -> <term> <mulop> <signed-factor> | <signed-factor> */
 factor      ::= factor:f TIMES:op signed_factor:s
                 {: RESULT = new OpExp(opleft, opright, f, OpExp.TIMES, s); :}
-              | factor:f DIVIDE:op signed_factor:s
+              | factor:f OVER:op signed_factor:s
                 {: RESULT = new OpExp(opleft, opright, f, OpExp.OVER, s); :}
               | signed_factor:s
                 {: RESULT = s; :}
@@ -355,4 +354,25 @@ signed_factor
               ;
 
 /* (32) <call> -> ID ( <args> ) */
-call        ::= ID:i LPAREN args:a RP
+call        ::= ID:i LPAREN args:a RPAREN
+                {: RESULT = new CallExp(ileft, iright, i, a); :}
+              ;
+
+/* (33) <args> -> <arg-list> | ε */
+args        ::= arg_list:a
+                {: RESULT = a; :}
+              | 
+                {: RESULT = null; :}
+              ;
+
+/* (34) <arg-list> -> <arg-list> , <expression> | <expression> */
+arg_list    ::= arg_list:al COMMA expr:e
+                {: ExpList t = al;
+                   while(t.tail != null)
+                     t = t.tail;
+                   t.tail = new ExpList(e, null);
+                   RESULT = al;
+                :}
+              | expr:e
+                {: RESULT = new ExpList(e, null); :}
+              ;
