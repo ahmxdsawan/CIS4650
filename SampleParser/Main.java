@@ -15,13 +15,30 @@ import java.io.*;
 import absyn.*;
    
 class Main {
-  public final static boolean SHOW_TREE = true;
   static public void main(String argv[]) {    
     /* Start the parser */
     try {
-      parser p = new parser(new Lexer(new FileReader(argv[0])));
+      boolean showTree = false;
+      String filename = null;
+      
+      // Process command line arguments
+      for (int i = 0; i < argv.length; i++) {
+        if (argv[i].equals("-a")) {
+          showTree = true;
+        } else {
+          filename = argv[i];
+        }
+      }
+      
+      if (filename == null) {
+        System.out.println("Usage: java -classpath /usr/share/java/cup.jar:. Main [-a] filename.cm");
+        System.exit(1);
+      }
+      
+      parser p = new parser(new Lexer(new FileReader(filename)));
       Absyn result = (Absyn)(p.parse().value);      
-      if (SHOW_TREE && result != null) {
+      
+      if (showTree && result != null) {
          System.out.println("The abstract syntax tree is:");
          AbsynVisitor visitor = new ShowTreeVisitor();
          result.accept(visitor, 0); 
