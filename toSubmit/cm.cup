@@ -68,6 +68,7 @@ parser code {:
 
 :};
 
+// Declare terminals
 terminal BOOL, ELSE, IF, INT, RETURN, VOID, WHILE;
 terminal PLUS, MINUS, TIMES, LT, GT, LTE, GTE, EQ;
 terminal NEQ, ASSIGN, NOT, OR, AND, OVER;
@@ -76,6 +77,7 @@ terminal String ID, NUM;
 terminal Boolean TRUTH;
 terminal ERROR;
 
+// Declare all non terminals
 non terminal ExpList program;
 non terminal ExpList decl_list;
 non terminal Exp decl, var_decl, fun_decl, fun_prototype;
@@ -100,79 +102,77 @@ precedence left AND;
 
 start with program;
 
-/* (1) <program> -> <declaration-list> */
-program     ::= decl_list:dl
-                {: RESULT = dl; :}
-              ;
+// (1) <program> -> <declaration-list>
+program ::= decl_list:dl
+            {: RESULT = dl; :}
+          ;
 
-/* (2) <declaration-list> -> <declaration-list> <declaration> | <declaration> */
-decl_list   ::= decl_list:dl decl:d
-                {: ExpList t = dl;
-                   while(t.tail != null)
-                     t = t.tail;
-                   t.tail = new ExpList(d, null);
-                   RESULT = dl;
-                :}
-              | decl:d
-                {: RESULT = new ExpList(d, null); :}
-              | error decl:d
-                {: parser.report_error("Invalid declaration", null);
-                   parser.valid = false;
-                   RESULT = new ExpList(d, null);
-                :}
-              ;
+// (2) <declaration-list> -> <declaration-list> <declaration> | <declaration>
+decl_list ::= decl_list:dl decl:d
+              {: ExpList t = dl;
+                  while(t.tail != null)
+                    t = t.tail;
+                  t.tail = new ExpList(d, null);
+                  RESULT = dl;
+              :}
+            | decl:d
+              {: RESULT = new ExpList(d, null); :}
+            | error decl:d
+              {: parser.report_error("Invalid declaration", null);
+                  parser.valid = false;
+                  RESULT = new ExpList(d, null);
+              :}
+            ;
 
-/* (3) <declaration> -> <var-declaration> | <fun-declaration> | <fun-prototype> */
-decl        ::= var_decl:v
-                {: RESULT = v; :}
-              | fun_decl:f
-                {: RESULT = f; :}
-              | fun_prototype:fp
-                {: RESULT = fp; :}
-              ;
+// (3) <declaration> -> <var-declaration> | <fun-declaration> | <fun-prototype>
+decl ::= var_decl:v
+          {: RESULT = v; :}
+        | fun_decl:f
+          {: RESULT = f; :}
+        | fun_prototype:fp
+          {: RESULT = fp; :}
+        ;
 
-/* (4) <var-declaration> -> <type-specifier> ID ; | <type-specifier> ID [ NUM ] ; */
-var_decl    ::= type_specifier:t ID:i SEMI
-                {: RESULT = new VarDeclExp(tleft, tright, t, i, -1); :}
-              | type_specifier:t ID:i LBRACKET NUM:n RBRACKET SEMI
-                {: RESULT = new VarDeclExp(tleft, tright, t, i, Integer.parseInt(n)); :}
-              | type_specifier:t error SEMI
-                {: parser.report_error("Invalid variable declaration", null);
-                   parser.valid = false;
-                   RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
-                :}
-              ;
+// (4) <var-declaration> -> <type-specifier> ID ; | <type-specifier> ID [ NUM ] ;
+var_decl ::= type_specifier:t ID:i SEMI
+              {: RESULT = new VarDeclExp(tleft, tright, t, i, -1); :}
+            | type_specifier:t ID:i LBRACKET NUM:n RBRACKET SEMI
+              {: RESULT = new VarDeclExp(tleft, tright, t, i, Integer.parseInt(n)); :}
+            | type_specifier:t error SEMI
+              {: parser.report_error("Invalid variable declaration", null);
+                  parser.valid = false;
+                  RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
+              :}
+            ;
 
-/* (5) <type-specifier> -> bool | int | void */
-type_specifier 
-              ::= BOOL:b
-                  {: RESULT = new TypeExp(bleft, bright, TypeExp.BOOL, false); :}
-                | INT:i
-                  {: RESULT = new TypeExp(ileft, iright, TypeExp.INT, false); :}
-                | VOID:v
-                  {: RESULT = new TypeExp(vleft, vright, TypeExp.VOID, false); :}
+// (5) <type-specifier> -> bool | int | void
+type_specifier ::= BOOL:b
+                    {: RESULT = new TypeExp(bleft, bright, TypeExp.BOOL, false); :}
+                  | INT:i
+                    {: RESULT = new TypeExp(ileft, iright, TypeExp.INT, false); :}
+                  | VOID:v
+                    {: RESULT = new TypeExp(vleft, vright, TypeExp.VOID, false); :}
+                  ;
+
+// (6) <fun-declaration> -> <type-specifier> ID ( <params> ) <compound-stmt>
+fun_decl ::= type_specifier:t ID:i LPAREN params:p RPAREN compound_stmt:c
+              {: RESULT = new FunctionDec(tleft, tright, t, i, p, c); :}
+            ;
+
+// (7) <fun-prototype> -> <type-specifier> ID ( <params> ) ;
+fun_prototype ::= type_specifier:t ID:i LPAREN params:p RPAREN SEMI
+                  {: RESULT = new FunctionDec(tleft, tright, t, i, p, null); :}
                 ;
 
-/* (6) <fun-declaration> -> <type-specifier> ID ( <params> ) <compound-stmt> */
-fun_decl    ::= type_specifier:t ID:i LPAREN params:p RPAREN compound_stmt:c
-                {: RESULT = new FunctionDec(tleft, tright, t, i, p, c); :}
-              ;
+// (8) <params> -> <param-list> | void
+params ::= param_list:p
+            {: RESULT = p; :}
+          | VOID:v
+            {: RESULT = null; :}
+          ;
 
-/* (7) <fun-prototype> -> <type-specifier> ID ( <params> ) ; */
-fun_prototype
-              ::= type_specifier:t ID:i LPAREN params:p RPAREN SEMI
-                {: RESULT = new FunctionDec(tleft, tright, t, i, p, null); :}
-              ;
-
-/* (8) <params> -> <param-list> | void */
-params      ::= param_list:p
-                {: RESULT = p; :}
-              | VOID:v
-                {: RESULT = null; :}
-              ;
-
-/* (9) <param-list> -> <param-list> , <param> | <param> */
-param_list  ::= param_list:pl COMMA param:p
+// (9) <param-list> -> <param-list> , <param> | <param>
+param_list ::= param_list:pl COMMA param:p
                 {: VarDecList t = pl;
                    while(t.tail != null)
                      t = t.tail;
@@ -183,28 +183,27 @@ param_list  ::= param_list:pl COMMA param:p
                 {: RESULT = new VarDecList(p, null); :}
               ;
 
-/* (10) <param> -> <type-specifier> ID | <type-specifier> ID [ ] */
-param       ::= type_specifier:t ID:i
-                {: RESULT = new VarDeclExp(tleft, tright, t, i, -1); :}
-              | type_specifier:t ID:i LBRACKET RBRACKET
-                {: TypeExp arrayType = new TypeExp(tleft, tright, t.type, true);
-                   RESULT = new VarDeclExp(tleft, tright, arrayType, i, -1);
-                :}
-              ;
+// (10) <param> -> <type-specifier> ID | <type-specifier> ID [ ]
+param ::= type_specifier:t ID:i
+          {: RESULT = new VarDeclExp(tleft, tright, t, i, -1); :}
+        | type_specifier:t ID:i LBRACKET RBRACKET
+          {: TypeExp arrayType = new TypeExp(tleft, tright, t.type, true);
+              RESULT = new VarDeclExp(tleft, tright, arrayType, i, -1);
+          :}
+        ;
 
-/* (11) <compound-stmt> -> { <local-declarations> <statement-list> } */
-compound_stmt
-              ::= LBRACE:l local_decls:ld stmt_list:sl RBRACE
-                {: RESULT = new CompoundExp(lleft, lright, ld, sl); :}
-              | LBRACE:l local_decls:ld RBRACE
-                {: RESULT = new CompoundExp(lleft, lright, ld, null); :}
-              | LBRACE:l stmt_list:sl RBRACE
-                {: RESULT = new CompoundExp(lleft, lright, null, sl); :}
-              | LBRACE:l RBRACE
-                {: RESULT = new CompoundExp(lleft, lright, null, null); :}
-              ;
+// (11) <compound-stmt> -> { <local-declarations> <statement-list> }
+compound_stmt ::= LBRACE:l local_decls:ld stmt_list:sl RBRACE
+                  {: RESULT = new CompoundExp(lleft, lright, ld, sl); :}
+                | LBRACE:l local_decls:ld RBRACE
+                  {: RESULT = new CompoundExp(lleft, lright, ld, null); :}
+                | LBRACE:l stmt_list:sl RBRACE
+                  {: RESULT = new CompoundExp(lleft, lright, null, sl); :}
+                | LBRACE:l RBRACE
+                  {: RESULT = new CompoundExp(lleft, lright, null, null); :}
+                ;
 
-/* (12) <local-declarations> -> <local-declarations> <var-declaration> | ε */
+// (12) <local-declarations> -> <local-declarations> <var-declaration> | e
 local_decls ::= local_decls:ld var_decl:v
                 {: VarDecList t = ld;
                    while(t.tail != null)
@@ -216,93 +215,93 @@ local_decls ::= local_decls:ld var_decl:v
                 {: RESULT = new VarDecList((VarDeclExp)v, null); :}
               ;
 
-/* (13) <statement-list> -> <statement-list> <statement> | ε */
-stmt_list   ::= stmt_list:sl stmt:s
-                {: ExpList t = sl;
-                   while(t.tail != null)
-                     t = t.tail;
-                   t.tail = new ExpList(s, null);
-                   RESULT = sl;
-                :}
-              | stmt:s
-                {: RESULT = new ExpList(s, null); :}
-              ;
+// (13) <statement-list> -> <statement-list> <statement> | e
+stmt_list ::= stmt_list:sl stmt:s
+              {: ExpList t = sl;
+                  while(t.tail != null)
+                    t = t.tail;
+                  t.tail = new ExpList(s, null);
+                  RESULT = sl;
+              :}
+            | stmt:s
+              {: RESULT = new ExpList(s, null); :}
+            ;
 
-/* (14) <statement> -> <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> | <return-stmt> */
-stmt        ::= expr_stmt:e
-                {: RESULT = e; :}
-              | compound_stmt:c
-                {: RESULT = c; :}
-              | select_stmt:s
-                {: RESULT = s; :}
-              | iter_stmt:i
-                {: RESULT = i; :}
-              | return_stmt:r
-                {: RESULT = r; :}
-              ;
+// (14) <statement> -> <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> | <return-stmt>
+stmt ::= expr_stmt:e
+          {: RESULT = e; :}
+        | compound_stmt:c
+          {: RESULT = c; :}
+        | select_stmt:s
+          {: RESULT = s; :}
+        | iter_stmt:i
+          {: RESULT = i; :}
+        | return_stmt:r
+          {: RESULT = r; :}
+        ;
 
-/* (15) <expression-stmt> -> <expression> ; | ; */
-expr_stmt   ::= expr:e SEMI
-                {: RESULT = e; :}
-              | SEMI:s
-                {: RESULT = new NilExp(sleft, sright); :}
-              ;
+// (15) <expression-stmt> -> <expression> ; | ;
+expr_stmt ::= expr:e SEMI
+              {: RESULT = e; :}
+            | SEMI:s
+              {: RESULT = new NilExp(sleft, sright); :}
+            ;
 
-/* (16) <selection-stmt> -> if ( <expression> ) <statement> | if ( <expression> ) <statement> else <statement> */
+// (16) <selection-stmt> -> if ( <expression> ) <statement> | if ( <expression> ) <statement> else <statement>
 select_stmt ::= IF:i LPAREN expr:e RPAREN stmt:s
                 {: RESULT = new IfExp(ileft, iright, e, new ExpList(s, null), null); :}
               | IF:i LPAREN expr:e RPAREN stmt:s1 ELSE stmt:s2
                 {: RESULT = new IfExp(ileft, iright, e, new ExpList(s1, null), new ExpList(s2, null)); :}
               ;
 
-/* (17) <iteration-stmt> -> while ( <expression> ) <statement> */
-iter_stmt   ::= WHILE:w LPAREN expr:e RPAREN stmt:s
-                {: RESULT = new WhileExp(wleft, wright, e, s); :}
-              ;
+// (17) <iteration-stmt> -> while ( <expression> ) <statement>
+iter_stmt ::= WHILE:w LPAREN expr:e RPAREN stmt:s
+              {: RESULT = new WhileExp(wleft, wright, e, s); :}
+            ;
 
-/* (18) <return-stmt> -> return <expression> ; | return ; */
+// (18) <return-stmt> -> return <expression> ; | return ;
 return_stmt ::= RETURN:r expr:e SEMI
                 {: RESULT = new ReturnExp(rleft, rright, e); :}
               | RETURN:r SEMI
                 {: RESULT = new ReturnExp(rleft, rright, null); :}
               ;
 
-/* (19) <expression> -> <var> = <expression> | <obool-expression> */
-expr        ::= var:v ASSIGN:a expr:e
-                {: RESULT = new AssignExp(aleft, aright, v, e); :}
-              | obool_expr:o
-                {: RESULT = o; :}
-              ;
+// (19) <expression> -> <var> = <expression> | <obool-expression>
+expr ::= var:v ASSIGN:a expr:e
+          {: RESULT = new AssignExp(aleft, aright, v, e); :}
+        | obool_expr:o
+          {: RESULT = o; :}
+        ;
 
-/* (20) <var> -> ID | ID [ <expression> ] */
-var         ::= ID:i
-                {: RESULT = new SimpleVar(ileft, iright, i); :}
-              | ID:i LBRACKET expr:e RBRACKET
-                {: RESULT = new IndexVar(ileft, iright, i, e); :}
-              ;
+// (20) <var> -> ID | ID [ <expression> ]
+var ::= ID:i
+        {: RESULT = new SimpleVar(ileft, iright, i); :}
+      | ID:i LBRACKET expr:e RBRACKET
+        {: RESULT = new IndexVar(ileft, iright, i, e); :}
+      ;
 
-/* (21) <obool-expression> -> <obool-expression> || <abool-expression> | <abool-expression> */
-obool_expr  ::= obool_expr:o OR:op abool_expr:a
+// (21) <obool-expression> -> <obool-expression> || <abool-expression> | <abool-expression>
+obool_expr ::= obool_expr:o OR:op abool_expr:a
                 {: RESULT = new OpExp(opleft, opright, o, OpExp.OR, a); :}
               | abool_expr:a
                 {: RESULT = a; :}
               ;
 
-/* (22) <abool-expression> -> <abool-expression> && <ubool-expression> | <ubool-expression> */
-abool_expr  ::= abool_expr:a AND:op ubool_expr:u
+// (22) <abool-expression> -> <abool-expression> && <ubool-expression> | <ubool-expression>
+abool_expr ::= abool_expr:a AND:op ubool_expr:u
                 {: RESULT = new OpExp(opleft, opright, a, OpExp.AND, u); :}
               | ubool_expr:u
                 {: RESULT = u; :}
               ;
 
-/* (23) <ubool-expression> -> ~ <ubool-expression> | <simple-expression> */
-ubool_expr  ::= NOT:n ubool_expr:u
+// (23) <ubool-expression> -> ~ <ubool-expression> | <simple-expression>
+ubool_expr ::= NOT:n ubool_expr:u
                 {: RESULT = new OpExp(nleft, nright, null, OpExp.NOT, u); :}
               | simple_expr:s
                 {: RESULT = s; :}
               ;
 
-/* (24) <simple-expression> -> <additive-expression> <relop> <additive-expression> | <additive-expression> */
+// (24) <simple-expression> -> <additive-expression> <relop> <additive-expression> | <additive-expression>
 simple_expr ::= simple_expr:s1 LT:op simple_expr:s2
                 {: RESULT = new OpExp(opleft, opright, s1, OpExp.LT, s2); :}
               | simple_expr:s1 LTE:op simple_expr:s2
@@ -319,60 +318,59 @@ simple_expr ::= simple_expr:s1 LT:op simple_expr:s2
                 {: RESULT = t; :}
               ;
 
-/* (26-27) <additive-expression> -> <additive-expression> <addop> <term> | <term> */
-term        ::= term:t PLUS:op factor:f
-                {: RESULT = new OpExp(opleft, opright, t, OpExp.PLUS, f); :}
-              | term:t MINUS:op factor:f
-                {: RESULT = new OpExp(opleft, opright, t, OpExp.MINUS, f); :}
-              | factor:f
-                {: RESULT = f; :}
-              ;
+// (26-27) <additive-expression> -> <additive-expression> <addop> <term> | <term>
+term ::= term:t PLUS:op factor:f
+          {: RESULT = new OpExp(opleft, opright, t, OpExp.PLUS, f); :}
+        | term:t MINUS:op factor:f
+          {: RESULT = new OpExp(opleft, opright, t, OpExp.MINUS, f); :}
+        | factor:f
+          {: RESULT = f; :}
+        ;
 
-/* (28-29) <term> -> <term> <mulop> <signed-factor> | <signed-factor> */
-factor      ::= factor:f TIMES:op signed_factor:s
-                {: RESULT = new OpExp(opleft, opright, f, OpExp.TIMES, s); :}
-              | factor:f OVER:op signed_factor:s
-                {: RESULT = new OpExp(opleft, opright, f, OpExp.OVER, s); :}
-              | signed_factor:s
-                {: RESULT = s; :}
-              ;
+// (28-29) <term> -> <term> <mulop> <signed-factor> | <signed-factor>
+factor ::= factor:f TIMES:op signed_factor:s
+            {: RESULT = new OpExp(opleft, opright, f, OpExp.TIMES, s); :}
+          | factor:f OVER:op signed_factor:s
+            {: RESULT = new OpExp(opleft, opright, f, OpExp.OVER, s); :}
+          | signed_factor:s
+            {: RESULT = s; :}
+          ;
 
-/* (30) <signed-factor> -> - <signed-factor> | <factor> */
-signed_factor 
-              ::= MINUS:m signed_factor:s
-                {: RESULT = new OpExp(mleft, mright, null, OpExp.UMINUS, s); :}
-              | call:c
-                {: RESULT = c; :}
-              | LPAREN expr:e RPAREN
-                {: RESULT = e; :}
-              | var:v
-                {: RESULT = v; :}
-              | NUM:n
-                {: RESULT = new IntExp(nleft, nright, n); :}
-              | TRUTH:t
-                {: RESULT = new BoolExp(tleft, tright, t); :}
-              ;
+// (30) <signed-factor> -> - <signed-factor> | <factor>
+signed_factor ::= MINUS:m signed_factor:s
+                  {: RESULT = new OpExp(mleft, mright, null, OpExp.UMINUS, s); :}
+                | call:c
+                  {: RESULT = c; :}
+                | LPAREN expr:e RPAREN
+                  {: RESULT = e; :}
+                | var:v
+                  {: RESULT = v; :}
+                | NUM:n
+                  {: RESULT = new IntExp(nleft, nright, n); :}
+                | TRUTH:t
+                  {: RESULT = new BoolExp(tleft, tright, t); :}
+                ;
 
-/* (32) <call> -> ID ( <args> ) */
-call        ::= ID:i LPAREN args:a RPAREN
-                {: RESULT = new CallExp(ileft, iright, i, a); :}
-              ;
+// (32) <call> -> ID ( <args> )
+call ::= ID:i LPAREN args:a RPAREN
+          {: RESULT = new CallExp(ileft, iright, i, a); :}
+        ;
 
-/* (33) <args> -> <arg-list> | ε */
-args        ::= arg_list:a
-                {: RESULT = a; :}
-              | 
-                {: RESULT = null; :}
-              ;
+// (33) <args> -> <arg-list> | e
+args ::= arg_list:a
+          {: RESULT = a; :}
+        | 
+          {: RESULT = null; :}
+        ;
 
-/* (34) <arg-list> -> <arg-list> , <expression> | <expression> */
-arg_list    ::= arg_list:al COMMA expr:e
-                {: ExpList t = al;
-                   while(t.tail != null)
-                     t = t.tail;
-                   t.tail = new ExpList(e, null);
-                   RESULT = al;
-                :}
-              | expr:e
-                {: RESULT = new ExpList(e, null); :}
-              ;
+// (34) <arg-list> -> <arg-list> , <expression> | <expression>
+arg_list ::= arg_list:al COMMA expr:e
+              {: ExpList t = al;
+                  while(t.tail != null)
+                    t = t.tail;
+                  t.tail = new ExpList(e, null);
+                  RESULT = al;
+              :}
+            | expr:e
+              {: RESULT = new ExpList(e, null); :}
+            ;
