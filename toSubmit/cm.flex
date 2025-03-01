@@ -1,7 +1,7 @@
 /*
   Created By: Fei Song
-  File Name: tiny.flex
-  To Build: jflex tiny.flex
+  File Name: cm.flex
+  To Build: jflex cm.flex
 
   and then after the parser is created
     javac Lexer.java

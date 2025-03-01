@@ -1,14 +1,14 @@
 /*
-  Created by: Fei Song
+  Created by: 
   File Name: Main.java
   To Build: 
-  After the Scanner.java, tiny.flex, and tiny.cup have been processed, do:
+  After the Scanner.java, cm.flex, and cm.cup have been processed, do:
     javac Main.java
   
   To Run: 
-    java -classpath /usr/share/java/cup.jar:. Main gcd.tiny
+    java -classpath /usr/share/java/cup.jar:. Main gcd.cm
 
-  where gcd.tiny is an test input file for the tiny language.
+  where gcd.cm is an test input file for the cm language.
 */
    
 import java.io.*;

@@ -1,11 +1,11 @@
-/* A factorial program that uses a Boolean variable */
+/* A factorial program that uses a Boolean variable, compiles without errors */
 
 void main(void) {
   int x; 
   int fac;
   bool test;
 
-  x =/ input();
+  x = input();
   fac = 1;
   test = x > 1;
   while (test) {
