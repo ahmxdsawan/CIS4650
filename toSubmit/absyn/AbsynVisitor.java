@@ -7,12 +7,8 @@ public interface AbsynVisitor {
   public void visit( IfExp exp, int level );
   public void visit( IntExp exp, int level );
   public void visit( OpExp exp, int level );
-  public void visit( ReadExp exp, int level );
-  public void visit( RepeatExp exp, int level );
-  public void visit( VarExp exp, int level );
-  public void visit( WriteExp exp, int level );
 
-  // New methods for C- language
+  // New methods
   public void visit(TypeExp exp, int level);
   public void visit(VarDeclExp exp, int level);
   public void visit(FunctionDec exp, int level);

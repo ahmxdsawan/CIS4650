@@ -1,5 +1,5 @@
 /*
-  Created By: Fei Song
+  Created By: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
   File Name: cm.flex
   To Build: jflex cm.flex
 
@@ -85,11 +85,7 @@ number = {digit}+
 /* A identifier integer is a word beginning a letter between A and
    Z, a and z, or an underscore followed by zero or more letters
    between A and Z, a and z, zero and nine, or an underscore. */
-// letter = [a-zA-Z]
-// identifier = {letter}+
-   
 identifier = [_a-zA-Z][_a-zA-Z0-9]*
-// TRUTH = false | true
 
 comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 
