@@ -102,6 +102,10 @@ precedence left AND;
 
 start with program;
 
+// TODO: Handle the ERROR token 
+// scanner_error ::= ERROR {: parser.report_error("Invalid token", null); :};
+
+// Below are the recommended syntactic rules from CM specification file
 // (1) <program> -> <declaration-list>
 program ::= decl_list:dl
             {: RESULT = dl; :}
