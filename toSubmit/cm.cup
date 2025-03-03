@@ -147,15 +147,18 @@ decl ::= var_decl:v
 var_decl ::= type_specifier:t ID:i SEMI
               {: RESULT = new VarDeclExp(tleft, tright, t, i, -1); :}
             | type_specifier:t ID:i LBRACKET NUM:n RBRACKET SEMI
-              {: RESULT = new VarDeclExp(tleft, tright, t, i, Integer.parseInt(n)); :}
-            | type_specifier:t error:e SEMI
               {: 
-                 // Get symbol information if available
-                 String found = (e instanceof java_cup.runtime.Symbol) ? 
-                     ((java_cup.runtime.Symbol)e).value.toString() : "unknown";
-                 parser.report_error("Invalid variable declaration, found: " + found, e);
-                 parser.valid = false;
-                 RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
+                 int size = Integer.parseInt(n);
+                 if (size <= 0) {
+                     parser.report_error("Invalid array size: array size must be greater than 0", new java_cup.runtime.Symbol(0, ileft, iright));
+                     parser.valid = false;
+                 }
+                 RESULT = new VarDeclExp(tleft, tright, t, i, size); 
+              :}
+            | type_specifier:t error SEMI
+              {: parser.report_error("Invalid variable declaration", null);
+                  parser.valid = false;
+                  RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
               :}
             ;
 

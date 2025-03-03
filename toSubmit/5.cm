@@ -1,29 +1,43 @@
-/* Comprehensive error testing file */
-int globalVar;
-
-void complexFunction(int param1, bool param2 
-    /* Unfinished function declaration */
-    if param1 > 0  /* Missing parenthesis */
-        return param2;
-    }
-    
-    int localVar = "string";  /* Type mismatch */
-    return param1;
+/* Program demonstrating various mixed error types */
+float calculate√area(float radius) {  /* Lexical error (invalid character √) */
+    return 3.14159 * radius * 2;  /* Syntax error (invalid operator **) */
 }
 
+int factorial(int n) {
+    if (n <= 0 return 1;  /* Syntax error (missing parenthesis) */
+    else {
+        int result = n * factorial(n - 1);
+        return result
+    }  /* Syntax error (missing semicolon) */
+}
+
+void displayMessage(char message[]) {
+    println(message);  /* Undefined function error */
+}
+
+int global;  /* Global variable declaration */
+
 void main(void) {
-    int x = input();
+    int x y z;  /* Syntax error (missing commas) */
+    char name = "John";  /* Type error (string to char assignment) */
     
-    while (x < 10  /* Missing closing parenthesis */
-        x = x + 1;
-        
-    if (x > 5 
-        output(x);  /* Unbalanced if statement */
+    global = 10
     
-    int arr[5];
-    arr[x] = 10;  /* Potential out-of-bounds access */
+    int local;  /* Local variable declaration */
     
-    unknownFunction(x);  /* Undefined function call */
+    for (int i = 0; i < 10; i++) {
+        float result = calculate√area(i);
+        displayMessage(result);  /* Type error (float to char[] argument) */
+    }
     
-    return x;  /* Incorrect return type in void function */
+    while (true {  /* Syntax error (missing parenthesis) */
+        if (local > 100)
+            break;
+        local++
+    }
+    
+    int array[-5];  /* Invalid array size error */
+    array[0][0] = 5;  /* Type error (treating 1D array as 2D) */
+    
+    int value = undefined;  /* Undefined variable error */
 }
