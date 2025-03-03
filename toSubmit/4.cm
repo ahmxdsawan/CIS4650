@@ -1,14 +1,13 @@
 /* Array and function declaration errors */
 int processArray(int arr[]) {
-    arr[10] = 5;  // Out-of-bounds array access
+    arr[[10];  /* mismatch brackets */
     return arr[0];
 }
 
 void main(void) {
-    int invalidArray[0];  // Invalid array size
-    int arr[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};  // Too many initializers
+
+    int invalidArray[0];  /* Invalid array size */
     
-    int result = processArray();  // Missing argument
+    int result = processArray();  /* Missing argument */
     
-    void localFunc(int x);  // Invalid local function prototype
 }

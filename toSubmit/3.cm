@@ -1,16 +1,11 @@
 /* Demonstrating type and scope error scenarios */
 bool checkPositive(int x) {
-    bool result = x > 0;  // Correct type usage
+    bool result = x > 0;  /* Incorrect type usage */
     return result;
 }
 
 void main(void) {
-    int x = true;  // Type mismatch error
-    bool y = 10;   // Another type mismatch
+    int x = true;  /* Type mismatch error */
     
-    if (undefinedVariable > 0) {  // Undefined variable
-        x = 5;
-    }
-    
-    checkPositive("string");  // Incorrect argument type
+    checkPositive("string");  /* Incorrect argument type */
 }

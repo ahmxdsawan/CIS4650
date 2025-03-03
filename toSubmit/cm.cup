@@ -104,8 +104,7 @@ start with program;
 // TODO: Handle the ERROR token 
 scanner_error ::= ERROR:e 
                 {: 
-                    // Use the symbol's left and right values for line and column
-                    parser.report_error("Invalid token", cur_token);
+                    parser.report_error("Illegal character in input", cur_token);
                     parser.valid = false; 
                 :}
                 ;
@@ -149,10 +148,14 @@ var_decl ::= type_specifier:t ID:i SEMI
               {: RESULT = new VarDeclExp(tleft, tright, t, i, -1); :}
             | type_specifier:t ID:i LBRACKET NUM:n RBRACKET SEMI
               {: RESULT = new VarDeclExp(tleft, tright, t, i, Integer.parseInt(n)); :}
-            | type_specifier:t error SEMI
-              {: parser.report_error("Invalid variable declaration", null);
-                  parser.valid = false;
-                  RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
+            | type_specifier:t error:e SEMI
+              {: 
+                 // Get symbol information if available
+                 String found = (e instanceof java_cup.runtime.Symbol) ? 
+                     ((java_cup.runtime.Symbol)e).value.toString() : "unknown";
+                 parser.report_error("Invalid variable declaration, found: " + found, e);
+                 parser.valid = false;
+                 RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
               :}
             ;
 
@@ -286,7 +289,7 @@ expr ::= var:v ASSIGN:a expr:e
          {: 
              parser.report_error("Invalid expression", null);
              parser.valid = false;
-             RESULT = new NilExp(-1, -1); // Placeholder for error
+             RESULT = new NilExp(-1, -1);
          :}
        ;
 
