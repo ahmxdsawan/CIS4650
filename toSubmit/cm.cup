@@ -101,14 +101,6 @@ precedence left AND;
 
 start with program;
 
-// TODO: Handle the ERROR token 
-scanner_error ::= ERROR:e 
-                {: 
-                    parser.report_error("Illegal character in input", cur_token);
-                    parser.valid = false; 
-                :}
-                ;
-
 // Below are the recommended syntactic rules from CM specification file
 // (1) <program> -> <declaration-list>
 program ::= decl_list:dl
@@ -127,7 +119,6 @@ decl_list ::= decl_list:dl decl:d
               {: RESULT = new ExpList(d, null); :}
             | error decl:d
               {: 
-                  // More comprehensive error recovery for declarations
                   parser.report_error("Syntax error in declaration", null);
                   parser.valid = false;
                   RESULT = new ExpList(d, null);

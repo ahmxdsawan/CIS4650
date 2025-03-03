@@ -1,4 +1,5 @@
 /* Array and function declaration errors */
+
 int processArray(int arr[]) {
     arr[[10];  /* mismatch brackets */
     return arr[0];

@@ -1,4 +1,5 @@
 /* Program demonstrating lexical and syntactic errors */
+
 int gcd(int u, int v) {
     int ε;  /* Invalid character error (Greek epsilon) */
     if (v == 0) return u;

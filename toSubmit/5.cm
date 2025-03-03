@@ -1,10 +1,11 @@
 /* Program demonstrating various mixed error types */
+
 float calculate√area(float radius) {  /* Lexical error (invalid character √) */
     return 3.14159 * radius * 2;  /* Syntax error (invalid operator **) */
 }
 
 int factorial(int n) {
-    if (n <= 0 return 1;  /* Syntax error (missing parenthesis) */
+    if (n <= 0) return 1;
     else {
         int result = n * factorial(n - 1);
         return result

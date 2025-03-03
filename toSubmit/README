@@ -1,6 +1,8 @@
 Checkpoint 1 README File
 Group 9: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
 
+Note: We used the provided C1-Package for guidance.
+
 Build Instructions
 
 To build the parser, type "make" in the current directory, which will 
@@ -16,3 +18,8 @@ and the syntax tree will be displayed on the screen.
 
 Test Instructions
 
+To test the error handling run the following line on files [1,2,3,4,5].cm
+
+    "java -cp /usr/share/java/cup.jar:. Main 1.cm" 
+
+We have tested our program with the provided tiny files from the assignment package "C1-Package.tgz".

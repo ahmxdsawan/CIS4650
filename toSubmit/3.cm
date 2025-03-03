@@ -1,4 +1,5 @@
 /* Demonstrating type and scope error scenarios */
+
 bool checkPositive(int x) {
     bool result = x > 0;  /* Incorrect type usage */
     return result;
