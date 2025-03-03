@@ -104,8 +104,8 @@ comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 "return"           { return symbol(sym.RETURN); }
 "void"             { return symbol(sym.VOID); }
 "while"             { return symbol(sym.WHILE); }
-"true"             { return symbol(sym.TRUTH); }
-"false"             { return symbol(sym.TRUTH); }
+"true"             { return symbol(sym.TRUTH, true); }
+"false"             { return symbol(sym.TRUTH, false); }
 "="                { return symbol(sym.ASSIGN); }
 "<"                { return symbol(sym.LT); }
 ">"                { return symbol(sym.GT); }

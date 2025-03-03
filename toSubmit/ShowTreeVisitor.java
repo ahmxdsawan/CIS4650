@@ -66,6 +66,24 @@ public class ShowTreeVisitor implements AbsynVisitor {
       case OpExp.UMINUS:
         System.out.println( " - " );
         break;
+      case OpExp.LTE:
+        System.out.println(" <= ");
+        break;
+      case OpExp.GTE:
+        System.out.println(" >= ");
+        break;
+      case OpExp.NEQ:
+        System.out.println(" != ");
+        break;
+      case OpExp.OR:
+        System.out.println(" || ");
+        break;
+      case OpExp.AND:
+        System.out.println(" && ");
+        break;
+      case OpExp.NOT:
+        System.out.println(" ~ ");
+        break;
       default:
         System.out.println( "Unrecognized operator at line " + exp.row + " and column " + exp.col);
     }
@@ -203,7 +221,7 @@ public class ShowTreeVisitor implements AbsynVisitor {
 
   public void visit(BoolExp exp, int level) {
     indent(level);
-    System.out.println("BoolExp");
+    System.out.println("BoolExp: " + exp.bool);
   }
 
 }

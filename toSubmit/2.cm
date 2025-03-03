@@ -1,17 +1,12 @@
-/* A program that uses a invalid token that creates an ERROR token */
-
-/* A program to perform Euclid’s algorithm to
-compute the greatest common divisor */
+/* Program demonstrating lexical and syntactic errors */
 int gcd(int u, int v) {
-    int ε;
+    int ε;  /* Invalid character error (Greek epsilon) */
     if (v == 0) return u;
-    else return gcd(v, u – u/v*v);
-    /* note that u – u/v*v = u mod v */
+    else return gcd(v, u – u/v*v);  /* Syntax error in subtraction */
 }
 
 void main(void) {
-    int x;
-    int y;
+    int x y;  /* Missing comma error */
     x = input(); y = input();
     output(gcd(x, y));
 }

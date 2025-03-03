@@ -36,7 +36,15 @@ class Main {
       }
       
       parser p = new parser(new Lexer(new FileReader(filename)));
-      Absyn result = (Absyn)(p.parse().value);      
+      Absyn result = (Absyn)(p.parse().value);   
+
+      // Check parser validity
+        if (!parser.valid) {
+            System.err.println("Parsing completed with errors.");
+        }
+        else {
+            System.out.println("Parsing completed successfully.");
+        }
       
       if (showTree && result != null) {
          System.out.println("The abstract syntax tree is:");

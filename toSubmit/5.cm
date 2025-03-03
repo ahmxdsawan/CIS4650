@@ -1,0 +1,29 @@
+/* Comprehensive error testing file */
+int globalVar;
+
+void complexFunction(int param1, bool param2 
+    // Unfinished function declaration
+    if param1 > 0  // Missing parenthesis
+        return param2;
+    }
+    
+    int localVar = "string";  // Type mismatch
+    return param1;
+}
+
+void main(void) {
+    int x = input();
+    
+    while (x < 10  // Missing closing parenthesis
+        x = x + 1;
+        
+    if (x > 5 
+        output(x);  // Unbalanced if statement
+    
+    int arr[5];
+    arr[x] = 10;  // Potential out-of-bounds access
+    
+    unknownFunction(x);  // Undefined function call
+    
+    return x;  // Incorrect return type in void function
+}
