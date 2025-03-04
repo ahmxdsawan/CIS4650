@@ -23,3 +23,20 @@ To test the error handling run the following line on files [1,2,3,4,5].cm
     "java -cp /usr/share/java/cup.jar:. Main 1.cm" 
 
 We have tested our program with the provided tiny files from the assignment package "C1-Package.tgz".
+
+Testing History
+
+Our general testing strategy was to use the provided files (C1-Package) in order to test our source code throughout the whole development stage.
+All tests were performed on the Linux server at linux.socs.uoguelph.ca.
+
+Scanner: We tested our scanner with the tiny.cup.bare file, which enabled us to see how our scanner was breaking down each token from the input file.
+We tested our scanner with the C-Minus source codes: fac.cm and gcd.cm. 
+Once all tokens were showing up as expected from all files, we moved on to the next stage of testing. 
+
+Parser: We tested the parser by checking the created abstract syntax trees for the following programs: fac.cm, booltest.cm and gcd.cm.
+We checked each created abstract syntax tree manually to ensure that our parser was working correctly before moving on to error handling.
+
+Error Handling: Error Handling was tested manually by creating our own test files [12345].cm.
+For the first test file we re-used the booltest.cm file, since it did not have any semantic or lexical errors in it.
+For the 2.cm, 3.cm and 4.cm files we tested each error we implemented one at a time, and validated the 
+reported error messages in our output to make sure the error handling was working correctly.
