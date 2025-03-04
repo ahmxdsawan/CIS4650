@@ -1,44 +1,30 @@
 /* Program demonstrating various mixed error types */
 
-float calculate√area(float radius) {  /* Lexical error (invalid character √) */
-    return 3.14159 * radius * 2;  /* Syntax error (invalid operator **) */
+int calculate√area(int radius) {  /* Lexical error (invalid character √) */
+    return 3.14159 * radius * 2; 
 }
 
 int factorial(int n) {
     if (n <= 0) return 1;
     else {
         int result = n * factorial(n - 1);
-        return result
-    }  /* Syntax error (missing semicolon) */
-}
-
-void displayMessage(char message[]) {
-    println(message);  /* Undefined function error */
+        return result;
+    }
 }
 
 int global;  /* Global variable declaration */
 
 void main(void) {
-    int x y z;  /* Syntax error (missing commas) */
-    char name = "John";  /* Type error (string to char assignment) */
-    
-    global = 10
-    
-    int local;  /* Local variable declaration */
-    
-    for (int i = 0; i < 10; i++) {
-        float result = calculate√area(i);
-        displayMessage(result);  /* Type error (float to char[] argument) */
-    }
-    
-    while (true {  /* Syntax error (missing parenthesis) */
-        if (local > 100)
-            break;
-        local++
-    }
-    
-    int array[-5];  /* Invalid array size error */
-    array[0][0] = 5;  /* Type error (treating 1D array as 2D) */
-    
-    int value = undefined;  /* Undefined variable error */
+    int x /* Missing semicolon */
+
+    int y;
+
+    int one two; /* Missing comma */
+
+    int arr[[20]; /* Mismatched Brackets */
+
+    int x = true;  /* Type mismatch error */
+
+
+    factorial("string");  /* Incorrect argument type */
 }

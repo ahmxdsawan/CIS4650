@@ -3,7 +3,7 @@ package absyn;
 public class VarDeclExp extends Exp {
   public TypeExp type;
   public String name;
-  public int size; // for arrays, -1 for non-arrays
+  public int size;
   
   public VarDeclExp(int row, int col, TypeExp type, String name, int size) {
     this.row = row;

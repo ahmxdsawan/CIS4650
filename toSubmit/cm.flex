@@ -132,4 +132,4 @@ comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 {identifier}       { return symbol(sym.ID, yytext()); }
 {WhiteSpace}+      { /* skip whitespace */ }   
 {comment}          { /* skip comments */ }
-.                  { return symbol(sym.ERROR); }
+.                  { return symbol(sym.ERROR, yytext()); }

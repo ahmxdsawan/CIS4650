@@ -41,7 +41,7 @@ parser code {:
                     /* Add to the end of the StringBuffer error message
                        the column number of the error in the input. */
                     m.append(", column "+(s.right+1));
-                            }
+            }
         }
    
         /* Add to the end of the StringBuffer error message created in
@@ -66,9 +66,25 @@ parser code {:
     /* Assume true at the start, but set to false with parsing errors */
     public static boolean valid = true;
 
+    /* Provides tokens when syntax_error is found / pretty output */
+    public void syntax_error(java_cup.runtime.Symbol current) {
+        String tokenValue = (current.value != null) ? " ('" + current.value + "')" : "";
+        report_error("Syntax error" + tokenValue, current);
+        
+        System.err.print("instead expected token classes are [");
+        java.util.List<Integer> list = expected_token_ids();
+        
+        // Inserting expecting token classes into error message
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) System.err.print(", ");
+            System.err.print(symbl_name_from_id(list.get(i)));
+        }
+        System.err.println("]");
+    }
+
 :};
 
-
+// Declare terminals
 terminal BOOL, ELSE, IF, INT, RETURN, VOID, WHILE;
 terminal PLUS, MINUS, TIMES, LT, GT, LTE, GTE, EQ;
 terminal NEQ, ASSIGN, NOT, OR, AND, OVER;
@@ -77,6 +93,7 @@ terminal String ID, NUM;
 terminal Boolean TRUTH;
 terminal ERROR;
 
+// Declare all non terminals
 non terminal ExpList program;
 non terminal ExpList decl_list;
 non terminal Exp decl, var_decl, fun_decl, fun_prototype;
@@ -101,7 +118,7 @@ precedence left AND;
 
 start with program;
 
-// Below are the recommended syntactic rules from CM specification file
+// Below are the recommended semantic rules from CM specification file
 // (1) <program> -> <declaration-list>
 program ::= decl_list:dl
             {: RESULT = dl; :}
@@ -118,10 +135,9 @@ decl_list ::= decl_list:dl decl:d
             | decl:d
               {: RESULT = new ExpList(d, null); :}
             | error decl:d
-              {: 
-                  parser.report_error("Syntax error in declaration", null);
-                  parser.valid = false;
-                  RESULT = new ExpList(d, null);
+              {: parser.report_error("Invalid declaration", null);
+                 parser.valid = false;
+                 RESULT = new ExpList(d, null);
               :}
             ;
 
@@ -141,15 +157,16 @@ var_decl ::= type_specifier:t ID:i SEMI
               {: 
                  int size = Integer.parseInt(n);
                  if (size <= 0) {
-                     parser.report_error("Invalid array size: array size must be greater than 0", new java_cup.runtime.Symbol(0, ileft, iright));
+                     parser.report_error("Invalid array size: '" + n + "' - array size must be greater than 0", 
+                                        new java_cup.runtime.Symbol(sym.NUM, nleft, nright, n));
                      parser.valid = false;
                  }
                  RESULT = new VarDeclExp(tleft, tright, t, i, size); 
               :}
             | type_specifier:t error SEMI
               {: parser.report_error("Invalid variable declaration", null);
-                  parser.valid = false;
-                  RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
+                 parser.valid = false;
+                 RESULT = new VarDeclExp(tleft, tright, t, "error", -1);
               :}
             ;
 
@@ -209,6 +226,11 @@ compound_stmt ::= LBRACE:l local_decls:ld stmt_list:sl RBRACE
                   {: RESULT = new CompoundExp(lleft, lright, null, sl); :}
                 | LBRACE:l RBRACE
                   {: RESULT = new CompoundExp(lleft, lright, null, null); :}
+                | LBRACE:l error RBRACE
+                  {: parser.report_error("Invalid compound statement", null);
+                     parser.valid = false;
+                     RESULT = new CompoundExp(lleft, lright, null, null);
+                  :}
                 ;
 
 // (12) <local-declarations> -> <local-declarations> <var-declaration> | e
@@ -246,6 +268,11 @@ stmt ::= expr_stmt:e
           {: RESULT = i; :}
         | return_stmt:r
           {: RESULT = r; :}
+        | error SEMI
+          {: parser.report_error("Invalid expression", null);
+             parser.valid = false;
+             RESULT = new NilExp(0, 0);
+          :}
         ;
 
 // (15) <expression-stmt> -> <expression> ; | ;
@@ -260,11 +287,21 @@ select_stmt ::= IF:i LPAREN expr:e RPAREN stmt:s
                 {: RESULT = new IfExp(ileft, iright, e, new ExpList(s, null), null); :}
               | IF:i LPAREN expr:e RPAREN stmt:s1 ELSE stmt:s2
                 {: RESULT = new IfExp(ileft, iright, e, new ExpList(s1, null), new ExpList(s2, null)); :}
+              | IF:i LPAREN error RPAREN stmt:s
+                {: parser.report_error("Invalid condition in if statement", null);
+                   parser.valid = false;
+                   RESULT = new IfExp(ileft, iright, new BoolExp(ileft, iright, false), new ExpList(s, null), null);
+                :}
               ;
 
 // (17) <iteration-stmt> -> while ( <expression> ) <statement>
 iter_stmt ::= WHILE:w LPAREN expr:e RPAREN stmt:s
               {: RESULT = new WhileExp(wleft, wright, e, s); :}
+            | WHILE:w LPAREN error RPAREN stmt:s
+              {: parser.report_error("Invalid condition in while statement", null);
+                 parser.valid = false;
+                 RESULT = new WhileExp(wleft, wright, new BoolExp(wleft, wright, false), s);
+              :}
             ;
 
 // (18) <return-stmt> -> return <expression> ; | return ;
@@ -272,6 +309,11 @@ return_stmt ::= RETURN:r expr:e SEMI
                 {: RESULT = new ReturnExp(rleft, rright, e); :}
               | RETURN:r SEMI
                 {: RESULT = new ReturnExp(rleft, rright, null); :}
+              | RETURN:r error SEMI
+                {: parser.report_error("Invalid return expression", null);
+                   parser.valid = false;
+                   RESULT = new ReturnExp(rleft, rright, null);
+                :}
               ;
 
 // (19) <expression> -> <var> = <expression> | <obool-expression>
@@ -279,19 +321,23 @@ expr ::= var:v ASSIGN:a expr:e
           {: RESULT = new AssignExp(aleft, aright, v, e); :}
         | obool_expr:o
           {: RESULT = o; :}
-        | error
-         {: 
-             parser.report_error("Invalid expression", null);
+        | var:v ASSIGN:a error
+          {: parser.report_error("Invalid expression on right side of assignment", null);
              parser.valid = false;
-             RESULT = new NilExp(-1, -1);
-         :}
-       ;
+             RESULT = new AssignExp(aleft, aright, v, new NilExp(aleft, aright));
+          :}
+        ;
 
 // (20) <var> -> ID | ID [ <expression> ]
 var ::= ID:i
         {: RESULT = new SimpleVar(ileft, iright, i); :}
       | ID:i LBRACKET expr:e RBRACKET
         {: RESULT = new IndexVar(ileft, iright, i, e); :}
+      | ID:i LBRACKET error RBRACKET
+        {: parser.report_error("Invalid array index expression for array '" + i + "'", null);
+           parser.valid = false;
+           RESULT = new IndexVar(ileft, iright, i, new IntExp(ileft, iright, "0"));
+        :}
       ;
 
 // (21) <obool-expression> -> <obool-expression> || <abool-expression> | <abool-expression>
@@ -348,6 +394,12 @@ factor ::= factor:f TIMES:op signed_factor:s
             {: RESULT = new OpExp(opleft, opright, f, OpExp.OVER, s); :}
           | signed_factor:s
             {: RESULT = s; :}
+          | ERROR:e
+            {: parser.report_error("Invalid character: '" + e + "'", 
+                                  new java_cup.runtime.Symbol(sym.ERROR, eleft, eright, e));
+               parser.valid = false;
+               RESULT = new NilExp(eleft, eright);
+            :}
           ;
 
 // (30) <signed-factor> -> - <signed-factor> | <factor>
@@ -357,6 +409,11 @@ signed_factor ::= MINUS:m signed_factor:s
                   {: RESULT = c; :}
                 | LPAREN expr:e RPAREN
                   {: RESULT = e; :}
+                | LPAREN error RPAREN
+                  {: parser.report_error("Invalid expression in parentheses", null);
+                     parser.valid = false;
+                     RESULT = new NilExp(0, 0);
+                  :}
                 | var:v
                   {: RESULT = v; :}
                 | NUM:n
@@ -368,6 +425,11 @@ signed_factor ::= MINUS:m signed_factor:s
 // (32) <call> -> ID ( <args> )
 call ::= ID:i LPAREN args:a RPAREN
           {: RESULT = new CallExp(ileft, iright, i, a); :}
+        | ID:i LPAREN error RPAREN
+          {: parser.report_error("Invalid function arguments for function '" + i + "'", null);
+             parser.valid = false;
+             RESULT = new CallExp(ileft, iright, i, null);
+          :}
         ;
 
 // (33) <args> -> <arg-list> | e
@@ -387,4 +449,9 @@ arg_list ::= arg_list:al COMMA expr:e
               :}
             | expr:e
               {: RESULT = new ExpList(e, null); :}
+            | arg_list:al COMMA error
+              {: parser.report_error("Invalid expression in function arguments", null);
+                 parser.valid = false;
+                 RESULT = al;
+              :}
             ;

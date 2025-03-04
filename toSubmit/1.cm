@@ -1,7 +1,7 @@
 /* A factorial program that uses a Boolean variable, compiles without errors */
 
 void main(void) {
-  int x; 
+  int x;
   int fac;
   bool test;
 

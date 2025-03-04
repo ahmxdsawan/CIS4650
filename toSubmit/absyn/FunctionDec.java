@@ -4,7 +4,7 @@ public class FunctionDec extends Exp {
   public TypeExp result;
   public String name;
   public VarDecList params;
-  public CompoundExp body; // null for function prototypes
+  public CompoundExp body;
   
   public FunctionDec(int row, int col, TypeExp result, String name, VarDecList params, CompoundExp body) {
     this.row = row;

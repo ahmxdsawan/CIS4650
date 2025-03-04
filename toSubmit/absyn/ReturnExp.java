@@ -1,7 +1,7 @@
 package absyn;
 
 public class ReturnExp extends Exp {
-  public Exp exp; // can be null for "return;"
+  public Exp exp;
   
   public ReturnExp(int row, int col, Exp exp) {
     this.row = row;

@@ -1,8 +1,8 @@
 package absyn;
 
 public class CompoundExp extends Exp {
-  public VarDecList decs;  // local declarations
-  public ExpList exps;  // statement list
+  public VarDecList decs; 
+  public ExpList exps; 
   
   public CompoundExp(int row, int col, VarDecList decs, ExpList exps) {
     this.row = row;
