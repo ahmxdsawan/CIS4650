@@ -1,7 +1,7 @@
 package absyn;
 
 public class AssignExp extends Exp {
-  // public VarExp lhs;
+  // public Var lhs;
   public Exp lhs;
   public Exp rhs;
 

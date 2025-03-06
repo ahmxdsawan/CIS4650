@@ -19,19 +19,26 @@ class Main {
     /* Start the parser */
     try {
       boolean showTree = false;
+      boolean showSymbolTable = false;
       String filename = null;
       
       // Process command line arguments
       for (int i = 0; i < argv.length; i++) {
-        if (argv[i].equals("-a")) {
-          showTree = true;
-        } else {
-          filename = argv[i];
+        switch (argv[i]) {
+          case "-a":
+            showTree = true;
+            break;
+          case "-s":
+            showSymbolTable = true;
+            break;
+          default:
+            filename = argv[i];
+            break;
         }
       }
       
       if (filename == null) {
-        System.out.println("Usage: java -classpath /usr/share/java/cup.jar:. Main [-a] filename.cm");
+        System.out.println("Usage: java -classpath /usr/share/java/cup.jar:. Main [-a] [-s] filename.cm");
         System.exit(1);
       }
       
@@ -46,10 +53,17 @@ class Main {
             System.out.println("Parsing completed successfully.");
         }
       
-      if (showTree && result != null) {
-         System.out.println("The abstract syntax tree is:");
-         AbsynVisitor visitor = new ShowTreeVisitor();
-         result.accept(visitor, 0); 
+      if (result != null) {
+        if (showTree) {
+          System.out.println("The abstract syntax tree is:");
+          AbsynVisitor visitor = new ShowTreeVisitor();
+          result.accept(visitor, 0); 
+        }
+        if (showSymbolTable) {
+          System.out.println("The Symbol Table is:");
+          AbsynVisitor visitor = new SemanticAnalyzer();
+          result.accept(visitor, 0); 
+        }
       }
     } catch (Exception e) {
       /* do cleanup here -- possibly rethrow e */

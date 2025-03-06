@@ -1,7 +1,5 @@
-Checkpoint 1 README File
+Checkpoint 2 README File
 Group 9: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
-
-Note: We used the provided C1-Package for guidance.
 
 Build Instructions
 
@@ -14,7 +12,13 @@ generate an executable program called "Main".
 
 and the syntax tree will be displayed on the screen.
 
-Remove the "-a" to not display the tree.
+You can also test the symbol table with the -s flag.
+
+  To test source code like "1.cm" this way, type
+
+    "java -cp /usr/share/java/cup.jar:. Main -s 1.cm" 
+
+Remove the "-s" to not display the symbol table
 
   To rebuild the parser, type "make clean" and type "make" again.
 
@@ -27,6 +31,8 @@ To test the error handling run the following line on files [1,2,3,4,5].cm
 We have tested our program with the provided tiny files from the assignment package "C1-Package.tgz".
 
 Testing History
+
+**TODO**: REWRITE THE TESTING HISTORY FOR C2 
 
 Our general testing strategy was to use the provided files (C1-Package) in order to test our source code throughout the whole development stage.
 All tests were performed on the Linux server at linux.socs.uoguelph.ca.
