@@ -1,12 +1,26 @@
-/* Demonstrating type and scope error scenarios */
-
-bool checkPositive(int x) {
-    bool result = x > 0;  /* Incorrect type usage */
-    return result;
-}
+/* Program demonstrating type checking errors */
 
 void main(void) {
-    int x = true;  /* Type mismatch error */
+    int x;
+    bool flag;
     
-    checkPositive("string");  /* Incorrect argument type */
+    x = 10;
+    flag = true;
+    
+    /* Type mismatch errors in assignments */
+    x = flag;     /* Error: Assigning bool to int */
+    flag = x;     /* Error: Assigning int to bool */
+    
+    /* Type errors in operations */
+    x = x + flag; /* Error: Cannot add int and bool */
+    
+    flag = flag + flag; /* Error: Cannot add bool values */
+    
+    /* Correct operation */
+    x = x + 5;
+    
+    /* Error: Comparison between different types */
+    if (x == flag) {
+        output(x);
+    }
 }

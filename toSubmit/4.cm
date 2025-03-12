@@ -1,14 +1,32 @@
-/* Array and function declaration errors */
+/* Program demonstrating array and function call errors */
 
-int processArray(int arr[]) {
-    arr[[10];  /* mismatch brackets */
-    return arr[0];
+int sum(int a, int b) {
+    return a + b;
+}
+
+void printValue(int x) {
+    output(x);
 }
 
 void main(void) {
-
-    int invalidArray[0];  /* Invalid array size */
+    int numbers[3];
+    bool flags;  /* Not an array */
     
-    int result = processArray();  /* Missing argument */
+    /* Error: Index is not an integer */
+    numbers[true] = 10;  
     
+    /* Error: Indexing a non-array variable */
+    flags[0] = false;
+    
+    /* Error: Wrong number of arguments */
+    sum(1);  
+    
+    /* Error: Wrong argument type */
+    sum(numbers, 2);
+    
+    /* Error: Wrong argument type */
+    printValue(true);
+    
+    /* Error: Function returns int but used as void */
+    printValue(sum(1, 2));  /* This should actually be valid, but included for testing */
 }

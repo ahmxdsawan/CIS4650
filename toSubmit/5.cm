@@ -1,30 +1,62 @@
-/* Program demonstrating various mixed error types */
+/* Program with multiple semantic errors for thorough testing */
 
-int calculate√area(int radius) {  /* Lexical error (invalid character √) */
-    return 3.14159 * radius * 2; 
+int globalVar;
+
+bool isEven(int num) {
+    return (num / 2) * 2 == num;
 }
 
-int factorial(int n) {
-    if (n <= 0) return 1;
-    else {
-        int result = n * factorial(n - 1);
-        return result;
+int max(int a, int b) {
+    if (a > b) return a;
+    else return b;
+}
+
+void noReturn(void) {
+    int x;
+    x = 10;
+    /* No return needed for void function */
+}
+
+int shouldReturn(int value) {
+    if (value > 0) {
+        return value;
     }
+    /* Error: Missing return in some paths */
 }
-
-int global;  /* Global variable declaration */
 
 void main(void) {
-    int x /* Missing semicolon */
-
-    int y;
-
-    int one two; /* Missing comma */
-
-    int arr[[20]; /* Mismatched Brackets */
-
-    int x = true;  /* Type mismatch error */
-
-
-    factorial("string");  /* Incorrect argument type */
+    int arr[0];   /* Error: Array size must be > 0 */
+    int x;
+    bool test;
+    
+    /* Error: Operation on undefined variable */
+    y = y + 1;
+    
+    /* Error: Type mismatch in test condition */
+    if (x = 5) {  /* Assignment in condition is valid in C-, but should check types */
+        x = 10;
+    }
+    
+    /* Error: Type mismatch in while condition */
+    while (noReturn()) {
+        x = x + 1;
+    }
+    
+    /* Error: Return type mismatch */
+    x = isEven(10);  /* isEven returns bool, assigning to int */
+    
+    /* Error: Incompatible types in operation */
+    test = test + 1;
+    
+    /* Error: Function call type mismatch */
+    noReturn(5);  /* Function takes no arguments */
+    
+    /* Error: Using void function in expression */
+    x = noReturn();
+    
+    /* Error: Array index out of bounds (semantic analyzer may not catch this) */
+    arr[100] = 5;
+    
+    /* Error: Operation on array */
+    arr = arr + 1;
 }

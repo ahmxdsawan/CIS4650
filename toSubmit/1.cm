@@ -1,18 +1,47 @@
-/* A factorial program that uses a Boolean variable, compiles without errors */
+/* A program that uses various language features and compiles without errors */
+
+int calculateSum(int arr[], int size) {
+    int sum;
+    int i;
+    
+    sum = 0;
+    i = 0;
+    
+    while (i < size) {
+        sum = sum + arr[i];
+        i = i + 1;
+    }
+    
+    return sum;
+}
+
+int factorial(int n) {
+    if (n <= 1) return 1;
+    else return n * factorial(n - 1);
+}
 
 void main(void) {
-  int x;
-  int fac;
-  bool test;
-
-  x = input();
-  fac = 1;
-  test = x > 1;
-  while (test) {
-    fac = fac * x;
-    x = x - 1;
-    test = x > 1;
-  } 
-
-  output(fac);
+    int numbers[5];
+    int result;
+    int i;
+    bool isPositive;
+    
+    /* Initialize array */
+    i = 0;
+    while (i < 5) {
+        numbers[i] = input();
+        i = i + 1;
+    }
+    
+    /* Call functions with correct types */
+    result = calculateSum(numbers, 5);
+    output(result);
+    
+    /* Test boolean expressions and conditionals */
+    isPositive = result > 0;
+    if (isPositive) {
+        output(factorial(result));
+    } else {
+        output(0);
+    }
 }

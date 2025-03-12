@@ -1,13 +1,26 @@
-/* Program demonstrating lexical and syntactic errors */
-
-int gcd(int u, int v) {
-    int ε;  /* Invalid character error (Greek epsilon) */
-    if (v == 0) return u;
-    else return gcd(v, u – u/v*v);  /* Syntax error in subtraction */
-}
+/* Program demonstrating undefined/redefined variable errors */
 
 void main(void) {
-    int x y;  /* Missing comma error */
-    x = input(); y = input();
-    output(gcd(x, y));
+    int x;
+    int x;        /* Error: Redefinition of variable 'x' */
+    
+    bool y;
+    
+    x = 10;
+    y = true;
+    
+    /* Error: Undefined variable 'z' */
+    z = 5;
+    
+    {
+        int a;
+        a = 20;
+        {
+            int a;  /* Valid redefinition in nested scope */
+            a = 30;
+        }
+    }
+    
+    /* Error: 'a' is not defined in this scope */
+    a = 40;
 }
