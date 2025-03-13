@@ -1,26 +1,21 @@
-/* Program demonstrating type checking errors */
+/* This program tests operand type mismatch and function defs/call mismatch */
+
+void foo(void) {
+    return;
+}
+
+int foo1(bool z) {
+    return 1;
+}
 
 void main(void) {
     int x;
-    bool flag;
-    
-    x = 10;
-    flag = true;
-    
-    /* Type mismatch errors in assignments */
-    x = flag;     /* Error: Assigning bool to int */
-    flag = x;     /* Error: Assigning int to bool */
-    
-    /* Type errors in operations */
-    x = x + flag; /* Error: Cannot add int and bool */
-    
-    flag = flag + flag; /* Error: Cannot add bool values */
-    
-    /* Correct operation */
-    x = x + 5;
-    
-    /* Error: Comparison between different types */
-    if (x == flag) {
-        output(x);
-    }
+    int y;
+
+    x = x * 2 + 1;
+    y = x + foo(); /* Type mismatch in operand */
+
+    foo(x); /* Function call parameter number mismatch */
+
+    foo1(x); /* Function call type mismatch */
 }

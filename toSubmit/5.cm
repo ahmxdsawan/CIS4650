@@ -1,62 +1,58 @@
-/* Program with multiple semantic errors for thorough testing */
+/* This program tests a mix of type checking errors */
 
-int globalVar;
-
-bool isEven(int num) {
-    return (num / 2) * 2 == num;
+void foo(void) {
+    return;
 }
 
-int max(int a, int b) {
-    if (a > b) return a;
-    else return b;
+int foo1(bool z) {
+    return 1;
 }
 
-void noReturn(void) {
-    int x;
-    x = 10;
-    /* No return needed for void function */
-}
-
-int shouldReturn(int value) {
-    if (value > 0) {
-        return value;
+int calculateSum(int arr[], int size) {
+    int sum;
+    int i;
+    sum = 0;
+    i = 0;
+    while (i < size) {
+        sum = sum + arr[i];
+        i = i + 1;
     }
-    /* Error: Missing return in some paths */
+    return sum;
 }
 
 void main(void) {
-    int arr[0];   /* Error: Array size must be > 0 */
     int x;
-    bool test;
-    
-    /* Error: Operation on undefined variable */
-    y = y + 1;
-    
-    /* Error: Type mismatch in test condition */
-    if (x = 5) {  /* Assignment in condition is valid in C-, but should check types */
-        x = 10;
+    int y;
+    int numbers[5];
+    int result;
+    bool isPositive;
+
+    /* Correctly initialize the array */
+    numbers[0] = input();
+    numbers[1] = input();
+    numbers[2] = input();
+    numbers[3] = input();
+    numbers[4] = input();
+
+    result = calculateSum(numbers, 5);
+    output(result);
+
+    /* Error: Using foo() (which returns void) in an arithmetic expression */
+    y = x + foo();
+
+    /* Error: Calling foo with an argument (foo takes no parameters) */
+    foo(x);
+
+    /* Error: Calling foo1 with an int argument, while foo1 expects a bool */
+    output(foo1(x));
+
+    /* Error: Using foo() as the condition in an if-statement (void cannot be used as condition) */
+    if(foo()) {
+        output(2);
     }
-    
-    /* Error: Type mismatch in while condition */
-    while (noReturn()) {
-        x = x + 1;
+
+    /* Error: Using foo() as the condition in a while-statement */
+    while(foo()) {
+        output(3);
     }
-    
-    /* Error: Return type mismatch */
-    x = isEven(10);  /* isEven returns bool, assigning to int */
-    
-    /* Error: Incompatible types in operation */
-    test = test + 1;
-    
-    /* Error: Function call type mismatch */
-    noReturn(5);  /* Function takes no arguments */
-    
-    /* Error: Using void function in expression */
-    x = noReturn();
-    
-    /* Error: Array index out of bounds (semantic analyzer may not catch this) */
-    arr[100] = 5;
-    
-    /* Error: Operation on array */
-    arr = arr + 1;
 }

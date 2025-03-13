@@ -1,4 +1,8 @@
-// SymbolInfo.java
+/*
+  Created by: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
+  File Name: SymbolInfo.java
+*/
+
 import java.util.List;
 import absyn.TypeExp;
 

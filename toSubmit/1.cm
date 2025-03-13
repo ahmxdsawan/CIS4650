@@ -1,16 +1,13 @@
 /* A program that uses various language features and compiles without errors */
 
+int i;
+
 int calculateSum(int arr[], int size) {
     int sum;
     int i;
     
     sum = 0;
     i = 0;
-    
-    while (i < size) {
-        sum = sum + arr[i];
-        i = i + 1;
-    }
     
     return sum;
 }
@@ -37,11 +34,7 @@ void main(void) {
     result = calculateSum(numbers, 5);
     output(result);
     
-    /* Test boolean expressions and conditionals */
+    /* Test boolean expressions */
     isPositive = result > 0;
-    if (isPositive) {
-        output(factorial(result));
-    } else {
-        output(0);
-    }
+
 }

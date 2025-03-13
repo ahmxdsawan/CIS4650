@@ -1,26 +1,18 @@
-/* Program demonstrating undefined/redefined variable errors */
+/* This program tests the type checking of assignments and array index type */
+
+void foo(void) {
+    return;
+}
 
 void main(void) {
-    int x;
-    int x;        /* Error: Redefinition of variable 'x' */
+    int a[2];
+    int test;
+    bool test1;
     
-    bool y;
-    
-    x = 10;
-    y = true;
-    
-    /* Error: Undefined variable 'z' */
-    z = 5;
-    
-    {
-        int a;
-        a = 20;
-        {
-            int a;  /* Valid redefinition in nested scope */
-            a = 30;
-        }
-    }
-    
-    /* Error: 'a' is not defined in this scope */
-    a = 40;
+
+    test = true; /* Type mismatch in assignment */
+
+    test1 = 3 + 1; /* Type mismatch in assignment */
+
+    a[foo()] = 2; /* Array index must be an interger */
 }

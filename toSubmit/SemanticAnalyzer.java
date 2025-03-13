@@ -1,4 +1,8 @@
-// SemanticAnalyzer.java
+/*
+  Created by: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
+  File Name: SemanticAnalyzer.java
+*/
+
 import absyn.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -21,6 +25,10 @@ public class SemanticAnalyzer implements AbsynVisitor {
         this.showScopeChanges = showScopeChanges;
         this.scopeLevel = 0;
         this.returnFound = false;
+
+        if (showScopeChanges) {
+        System.out.println("Entering global scope:");
+        }
         
         // Insert predefined functions into the global scope with null parameters list
         symTable.addSymbol("input", new SymbolInfo("input", TypeExp.INT, (List<SymbolInfo>)null));
@@ -29,6 +37,17 @@ public class SemanticAnalyzer implements AbsynVisitor {
 
     public SymbolTable getSymbolTable() {
         return symTable;
+    }
+
+     // Print the current (global) scope at the end.
+    public void printGlobalScope() {
+        if (showScopeChanges) {
+            System.out.println(getIndent(scopeLevel) + "Symbol Table Values:");
+            for (SymbolInfo info : symTable.getCurrentScopeSymbols()) {
+                System.out.println(getIndent(scopeLevel + 1) + info);
+            }
+            System.out.println("Leaving global scope.");
+        }
     }
     
     private String getIndent(int level) {
@@ -102,7 +121,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
                     int rightType = getExpressionType(exp.right);
                     
                     if (leftType != TypeExp.INT || rightType != TypeExp.INT) {
-                        System.err.println("Error: Arithmetic operations require integer operands at line " + (exp.row + 1) + ", column " + (exp.col + 1));
+                        System.err.println("Error: Type mismatch in operand at line " + (exp.row + 1) + ", column " + (exp.col + 1));
                     }
                 }
                 break;
@@ -173,6 +192,22 @@ public class SemanticAnalyzer implements AbsynVisitor {
         if (exp.size == 0) {
             System.err.println("Error: Array size cannot be 0 at line " + (exp.row + 1) + ", column " + (exp.col + 1));
         }
+
+        // if (exp.init != null){
+        //     exp.init.accept(this, level);
+            
+        //     // Type checking for initialization
+        //     int varType = exp.type.type;
+        //     int initType = getExpressionType(exp.init);
+            
+        //     if (varType != TypeExp.VOID && initType != TypeExp.VOID) {
+        //         if (varType != initType) {
+        //             System.err.println("Error: Type mismatch in variable initialization at line " + (exp.row + 1) + ", column " + (exp.col + 1));
+        //         }
+        //     } else {
+        //         System.err.println("Error: Cannot assign to/from void type at line " + (exp.row + 1) + ", column " + (exp.col + 1));
+        //     }
+        // }
         
         // For parameters, we need to check the type directly
         boolean isArray = exp.size != -1 || exp.type.isArray;
@@ -205,12 +240,12 @@ public class SemanticAnalyzer implements AbsynVisitor {
             System.err.println("Error: Redeclaration of function '" + exp.name + "' at line " + (exp.row + 1) + ", column " + (exp.col + 1));
         }
         
-        // Enter a new scope for the function body
-        scopeLevel++;
         if (showScopeChanges) {
-            System.out.println(getIndent(scopeLevel-1) + "Entering scope for function: " + exp.name);
+            System.out.println(getIndent(scopeLevel) + "Function: " + exp.name);
+            System.out.println(getIndent(scopeLevel) + "Entering function scope:");
         }
         symTable.enterScope();
+        scopeLevel++;
         
         // Save current function for return type checking
         SymbolInfo previousFunction = currentFunction;
@@ -226,29 +261,25 @@ public class SemanticAnalyzer implements AbsynVisitor {
         
         // Visit the function body
         if(exp.body != null) {
-            exp.body.accept(this, level+1);
-            
-            // Check if non-void function is missing a return statement
+            exp.body.accept(this, level + 1);
+            if (showScopeChanges) {
+                System.out.println(getIndent(scopeLevel) + "Symbol Table Values:");
+                for (SymbolInfo info : symTable.getCurrentScopeSymbols()) {
+                    System.out.println(getIndent(scopeLevel + 1) + info);
+                }
+            }
             if (exp.result.type != TypeExp.VOID && !returnFound) {
-                System.err.println("Error: Non-void function '" + exp.name + 
-                                  "' may not return a value in all paths at line " + 
-                                  (exp.row + 1) + ", column " + (exp.col + 1));
+                System.err.println("Error: Non-void function '" + exp.name 
+                    + "' may not return a value in all paths at line " + (exp.row + 1) + ", column " + (exp.col + 1));
             }
         }
         
         // Show symbol table before leaving the scope
-        if (showScopeChanges) {
-            System.out.println(getIndent(scopeLevel-1) + "Symbol table at exit from function " + exp.name + ":");
-            for (SymbolInfo info : symTable.getCurrentScopeSymbols()) {
-                System.out.println(getIndent(scopeLevel) + info);
-            }
-            System.out.println(getIndent(scopeLevel-1) + "Leaving scope for function: " + exp.name);
-        }
-        
         symTable.exitScope();
         scopeLevel--;
-        
-        // Restore previous function context
+        if (showScopeChanges) {
+            System.out.println(getIndent(scopeLevel) + "Leaving function scope");
+        }
         currentFunction = previousFunction;
     }
 
@@ -484,7 +515,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
             }
         }
         
-        // Default to INT for simplicity (you might want a different approach)
         return TypeExp.INT;
     }
 }

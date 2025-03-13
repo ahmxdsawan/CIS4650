@@ -56,13 +56,10 @@ class Main {
       }
 
       if (result != null) {
-        // Always perform semantic analysis, but only show tables if -s flag is used
         SemanticAnalyzer analyzer = new SemanticAnalyzer(showSymbolTable);
         result.accept(analyzer, 0);
-        
         if (showSymbolTable) {
-          System.out.println("\nGlobal Symbol Table:");
-          analyzer.getSymbolTable().print();
+          analyzer.printGlobalScope();
         }
       }
     } catch (Exception e) {

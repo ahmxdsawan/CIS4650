@@ -1,4 +1,8 @@
-// SymbolTable.java
+/*
+  Created by: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
+  File Name: SymbolTable.java
+*/
+
 import java.util.*;
 
 public class SymbolTable {
