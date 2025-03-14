@@ -46,6 +46,26 @@ public class SymbolInfo {
         if (isArray) {
             typeStr += "[]";
         }
-        return name + " : " + typeStr;
+        if (parameters != null) {
+            StringBuilder paramsStr = new StringBuilder();
+            paramsStr.append("(");
+            for (int i = 0; i < parameters.size(); i++) {
+                SymbolInfo param = parameters.get(i);
+                paramsStr.append(param.name).append(" : ");
+                switch(param.type) {
+                    case TypeExp.INT: paramsStr.append("int"); break;
+                    case TypeExp.BOOL: paramsStr.append("bool"); break;
+                    case TypeExp.VOID: paramsStr.append("void"); break;
+                    default: paramsStr.append("unknown");
+                }
+                if (i < parameters.size() - 1) {
+                    paramsStr.append(", ");
+                }
+            }
+            paramsStr.append(")");
+            return "Function " + name + " : " + typeStr + " " + paramsStr.toString();
+        } else {
+            return name + " : " + typeStr;
+        }
     }
 }
