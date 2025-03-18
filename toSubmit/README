@@ -42,3 +42,21 @@ Error Handling: Error Handling was tested manually by creating our own test file
 For the first test file we re-used the booltest.cm file, since it did not have any semantic or lexical errors in it.
 For the 2.cm, 3.cm and 4.cm files we tested each error we implemented one at a time, and validated the 
 reported error messages in our output to make sure the error handling was working correctly.
+
+Checkpoint 2 Testing:
+
+Symbol Table: The symbol table was tested by manually comparing the output files 
+[12345].cm with the printed symbol table. We were able to follow the program and look at 
+how the symbol table should be output, and then we made the necessary changes if 
+anything was incorrect. This method was especially useful when getting the symbol table 
+levels to work properly. 
+
+Semantic Analyzer: The semantic analyzer was tested in conjunction with the type 
+checker, since the post order traversal type checking was useful to determine if the 
+semantic analyzer was working correctly. We ran files with obvious type errors, and 
+evaluated if the compilation would stop upon reaching these errors.
+
+Type Checking: For our type checking, we tested various [12345].cm files that we created 
+to showcase the different types of type checking we added. In those files, we utilized the 
+provided example code snippets from the checkpoint 2 marking scheme document for a 
+head start on what to be testing.
