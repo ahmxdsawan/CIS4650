@@ -10,7 +10,7 @@ public class SymbolTable {
 
     public SymbolTable() {
         scopes = new Stack<>();
-        enterScope(); // Create the global scope
+        enterScope(); 
     }
 
     public void enterScope() {
@@ -23,8 +23,7 @@ public class SymbolTable {
         }
     }
 
-    // Inserts a symbol into the current scope.
-    // Returns false if the symbol already exists in this scope.
+    // Adds a symbol to the current scope. Returns true if the symbol was added successfully.
     public boolean addSymbol(String name, SymbolInfo info) {
         HashMap<String, SymbolInfo> currentScope = scopes.peek();
         if (currentScope.containsKey(name)) {
@@ -34,7 +33,8 @@ public class SymbolTable {
         return true;
     }
 
-    // Looks up the symbol starting from the innermost scope outward.
+    // Looks up a symbol in the current scope and enclosing scopes.
+    // Returns null if the symbol is not found.
     public SymbolInfo lookup(String name) {
         ListIterator<HashMap<String, SymbolInfo>> it = scopes.listIterator(scopes.size());
         while (it.hasPrevious()) {
@@ -46,7 +46,7 @@ public class SymbolTable {
         return null;
     }
 
-    // Get all symbols in the current scope
+    // Returns the symbols in the current scope
     public Collection<SymbolInfo> getCurrentScopeSymbols() {
         if (!scopes.isEmpty()) {
             return scopes.peek().values();
@@ -54,7 +54,7 @@ public class SymbolTable {
         return new ArrayList<SymbolInfo>();
     }
 
-    // Print the symbol table for all scopes.
+    // Print the symbol table
     public void print() {
         int level = 0;
         for (HashMap<String, SymbolInfo> scope : scopes) {

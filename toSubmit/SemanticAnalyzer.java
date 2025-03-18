@@ -11,8 +11,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
     private SymbolTable symTable;
     private boolean showScopeChanges;
     private int scopeLevel;
-    
-    // Keep track of the current function we're analyzing for return type checking
     private SymbolInfo currentFunction;
     private boolean returnFound;
 
@@ -20,6 +18,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
         this(false);
     }
     
+    // Constructor with option to show scope changes
     public SemanticAnalyzer(boolean showScopeChanges) {
         symTable = new SymbolTable();
         this.showScopeChanges = showScopeChanges;
@@ -30,7 +29,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
         System.out.println("Entering global scope:");
         }
         
-        // Insert predefined functions into the global scope with null parameters list
         symTable.addSymbol("input", new SymbolInfo("input", TypeExp.INT, (List<SymbolInfo>)null));
         symTable.addSymbol("output", new SymbolInfo("output", TypeExp.VOID, (List<SymbolInfo>)null));
     }
@@ -39,7 +37,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
         return symTable;
     }
 
-     // Print the current (global) scope at the end.
+    // Visit a list of declarations.
     public void printGlobalScope() {
         if (showScopeChanges) {
             System.out.println(getIndent(scopeLevel) + "Symbol Table Values:");
@@ -49,7 +47,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
             System.out.println("Leaving global scope.");
         }
     }
-    
+
     private String getIndent(int level) {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < level; i++) {
@@ -58,7 +56,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
         return s.toString();
     }
 
-    // Visit an expression list.
+    // Visit a list of declarations.
     public void visit(ExpList expList, int level) {
         while(expList != null) {
             expList.head.accept(this, level);
@@ -66,12 +64,11 @@ public class SemanticAnalyzer implements AbsynVisitor {
         }
     }
 
-    // Assignment: visit both sides and check types.
+    // Visit an assignment expression.
     public void visit(AssignExp exp, int level) {
         exp.lhs.accept(this, level);
         exp.rhs.accept(this, level);
         
-        // Type checking for assignment
         int lhsType = getExpressionType(exp.lhs);
         int rhsType = getExpressionType(exp.rhs);
         
@@ -84,10 +81,10 @@ public class SemanticAnalyzer implements AbsynVisitor {
         }
     }
 
+    // Visit a binary operation expression.
     public void visit(IfExp exp, int level) {
         exp.test.accept(this, level);
         
-        // Check that the test expression is int or bool
         int testType = getExpressionType(exp.test);
         if (testType != TypeExp.INT && testType != TypeExp.BOOL) {
             System.err.println("Error: Test condition in if statement must be int or bool at line " + (exp.row + 1) + ", column " + (exp.col + 1));
@@ -100,22 +97,21 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     public void visit(IntExp exp, int level) {
-        // Nothing to do for an integer literal.
+        
     }
 
+    // Visit a binary operation expression.
     public void visit(OpExp exp, int level) {
         if(exp.left != null)
             exp.left.accept(this, level);
         if(exp.right != null)
             exp.right.accept(this, level);
         
-        // Type checking for operations
         switch (exp.op) {
             case OpExp.PLUS:
             case OpExp.MINUS:
             case OpExp.TIMES:
             case OpExp.OVER:
-                // Both operands must be integers
                 if (exp.left != null && exp.right != null) {
                     int leftType = getExpressionType(exp.left);
                     int rightType = getExpressionType(exp.right);
@@ -132,7 +128,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
             case OpExp.GTE:
             case OpExp.EQ:
             case OpExp.NEQ:
-                // Both operands must be of the same type (int or bool)
                 if (exp.left != null && exp.right != null) {
                     int leftType = getExpressionType(exp.left);
                     int rightType = getExpressionType(exp.right);
@@ -145,7 +140,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
                 
             case OpExp.AND:
             case OpExp.OR:
-                // Both operands must be boolean
                 if (exp.left != null && exp.right != null) {
                     int leftType = getExpressionType(exp.left);
                     int rightType = getExpressionType(exp.right);
@@ -157,7 +151,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
                 break;
                 
             case OpExp.NOT:
-                // Operand must be boolean
                 if (exp.right != null) {
                     int rightType = getExpressionType(exp.right);
                     
@@ -168,7 +161,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
                 break;
                 
             case OpExp.UMINUS:
-                // Operand must be integer
                 if (exp.right != null) {
                     int rightType = getExpressionType(exp.right);
                     
@@ -181,35 +173,17 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     public void visit(TypeExp exp, int level) {
-        // Nothing to do.
+        
     }
 
-    // For a variable declaration, insert the variable into the symbol table.
+    // For a variable declaration:
     public void visit(VarDeclExp exp, int level) {
         exp.type.accept(this, level);
         
-        // Check if array size is valid
         if (exp.size == 0) {
             System.err.println("Error: Array size cannot be 0 at line " + (exp.row + 1) + ", column " + (exp.col + 1));
         }
 
-        // if (exp.init != null){
-        //     exp.init.accept(this, level);
-            
-        //     // Type checking for initialization
-        //     int varType = exp.type.type;
-        //     int initType = getExpressionType(exp.init);
-            
-        //     if (varType != TypeExp.VOID && initType != TypeExp.VOID) {
-        //         if (varType != initType) {
-        //             System.err.println("Error: Type mismatch in variable initialization at line " + (exp.row + 1) + ", column " + (exp.col + 1));
-        //         }
-        //     } else {
-        //         System.err.println("Error: Cannot assign to/from void type at line " + (exp.row + 1) + ", column " + (exp.col + 1));
-        //     }
-        // }
-        
-        // For parameters, we need to check the type directly
         boolean isArray = exp.size != -1 || exp.type.isArray;
         
         boolean added = symTable.addSymbol(exp.name, new SymbolInfo(exp.name, exp.type.type, isArray));
@@ -220,7 +194,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
 
     // For a function declaration:
     public void visit(FunctionDec exp, int level) {
-        // Collect parameter information
         List<SymbolInfo> paramList = new ArrayList<>();
         
         VarDecList params = exp.params;
@@ -234,7 +207,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
             params = params.tail;
         }
         
-        // Add function to symbol table with parameter info
         boolean added = symTable.addSymbol(exp.name, new SymbolInfo(exp.name, exp.result.type, paramList));
         if (!added) {
             System.err.println("Error: Redeclaration of function '" + exp.name + "' at line " + (exp.row + 1) + ", column " + (exp.col + 1));
@@ -247,14 +219,11 @@ public class SemanticAnalyzer implements AbsynVisitor {
         symTable.enterScope();
         scopeLevel++;
         
-        // Save current function for return type checking
         SymbolInfo previousFunction = currentFunction;
         currentFunction = symTable.lookup(exp.name);
         
-        // Reset return tracking for each function
         returnFound = false;
         
-        // Process parameters - add them to the function's scope
         if(exp.params != null) {
             exp.params.accept(this, level+1);
         }
@@ -283,7 +252,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
         currentFunction = previousFunction;
     }
 
-    // For a compound expression, create a new scope.
+    // For a compound expression:
     public void visit(CompoundExp exp, int level) {
         scopeLevel++;
         if (showScopeChanges) {
@@ -296,7 +265,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
         if(exp.exps != null)
             exp.exps.accept(this, level+1);
         
-        // Show symbol table before leaving the scope
         if (showScopeChanges) {
             System.out.println(getIndent(scopeLevel-1) + "Symbol table at exit from block:");
             for (SymbolInfo info : symTable.getCurrentScopeSymbols()) {
@@ -309,8 +277,8 @@ public class SemanticAnalyzer implements AbsynVisitor {
         scopeLevel--;
     }
 
+    // For a call expression:
     public void visit(CallExp exp, int level) {
-        // Lookup the function in the symbol table
         SymbolInfo funcInfo = symTable.lookup(exp.func);
         if (funcInfo == null) {
             System.err.println("Error: Undefined function '" + exp.func + "' at line " + (exp.row + 1) + ", column " + (exp.col + 1));
@@ -320,12 +288,10 @@ public class SemanticAnalyzer implements AbsynVisitor {
             return;
         }
         
-        // Process all arguments
         if (exp.args != null) {
             exp.args.accept(this, level);
         }
         
-        // Check argument counts and types
         if (funcInfo.parameters != null) {
             int expectedArgCount = funcInfo.parameters.size();
             int actualArgCount = countArguments(exp.args);
@@ -370,10 +336,10 @@ public class SemanticAnalyzer implements AbsynVisitor {
         }
     }
 
+    // For a list of expressions.
     public void visit(WhileExp exp, int level) {
         exp.test.accept(this, level);
         
-        // Check that the test expression is int or bool
         int testType = getExpressionType(exp.test);
         if (testType != TypeExp.INT && testType != TypeExp.BOOL) {
             System.err.println("Error: Test condition in while statement must be int or bool at line " + (exp.row + 1) + ", column " + (exp.col + 1));
@@ -382,6 +348,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
         exp.body.accept(this, level);
     }
 
+    // For a list of return expressions.
     public void visit(ReturnExp exp, int level) {
         if (exp.exp != null) {
             exp.exp.accept(this, level);
@@ -397,7 +364,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
                 }
             }
             
-            // Mark that we found a return statement
             returnFound = true;
         } else {
             // Empty return statement
@@ -408,6 +374,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
         }
     }
 
+    // For a list of VarDecList.
     public void visit(VarDecList list, int level) {
         while(list != null) {
             list.head.accept(this, level);
@@ -426,7 +393,6 @@ public class SemanticAnalyzer implements AbsynVisitor {
         
         var.index.accept(this, level);
         
-        // Check that the index is an integer
         int indexType = getExpressionType(var.index);
         if (indexType != TypeExp.INT) {
             System.err.println("Error: Array index must be an integer at line " + (var.row + 1) + ", column " + (var.col + 1));
@@ -442,14 +408,14 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     public void visit(NilExp exp, int level) {
-        // Nothing to do.
+        
     }
 
     public void visit(BoolExp exp, int level) {
-        // Nothing to do.
+        
     }
     
-    // Helper methods
+    // Helper method to count the number of arguments in a list
     private int countArguments(ExpList args) {
         int count = 0;
         ExpList current = args;
@@ -460,6 +426,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
         return count;
     }
     
+    // Helper method to convert a type integer to a string
     private String typeToString(int type) {
         switch (type) {
             case TypeExp.INT: return "int";

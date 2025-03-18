@@ -8,11 +8,10 @@ import absyn.TypeExp;
 
 public class SymbolInfo {
     public String name;
-    public int type;       // Use constants from TypeExp (e.g., TypeExp.INT, TypeExp.BOOL, TypeExp.VOID)
+    public int type;
     public boolean isArray;
-    public List<SymbolInfo> parameters; // For functions
+    public List<SymbolInfo> parameters;
     
-    // Constructor for variables
     public SymbolInfo(String name, int type, boolean isArray) {
         this.name = name;
         this.type = type;
@@ -20,7 +19,6 @@ public class SymbolInfo {
         this.parameters = null;
     }
     
-    // Constructor for functions with parameters
     public SymbolInfo(String name, int type, List<SymbolInfo> parameters) {
         this.name = name;
         this.type = type;

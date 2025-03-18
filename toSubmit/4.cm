@@ -1,4 +1,4 @@
-/* This program tests operand type mismatch and function defs/call mismatch */
+/* This program tests type checking on conditions */
 
 void foo(void) {
     return;

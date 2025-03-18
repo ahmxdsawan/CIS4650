@@ -1,3 +1,8 @@
+/*
+  Created by: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
+  File Name: Scanner.java
+*/
+
 import java.io.InputStreamReader;
 import java_cup.runtime.Symbol;
 
