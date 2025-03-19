@@ -1,0 +1,22 @@
+/* errors related to test conditions */
+
+void foo(void) {
+}
+
+void main(void) {
+  int x; 
+  int fac;
+
+  x = 10;
+  fac = 1;
+  while (foo()) {    /* void type for test condition */
+    fac = fac * x;
+    x = x - 1;
+  } 
+
+  if (foo()) {       /* void type for test condition */
+    x = 1;
+  } else {
+    x = 0;
+  }
+}

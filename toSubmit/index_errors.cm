@@ -1,0 +1,12 @@
+/* index erros for y[z] and y[foo()] */
+
+void foo(void) {
+}
+
+void main(void) {
+  int y[5];
+  bool z;
+
+  y[z] = 10;      /* z is not an int */
+  y[foo()] = 15;  /* foo() is not an int */
+}

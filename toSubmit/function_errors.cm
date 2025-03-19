@@ -1,0 +1,19 @@
+/* errors related to function returns and function calls */
+
+void foo(void) {
+  bool t;
+  return t;      /* t doesn't match void */
+}
+
+int gcd(int u, int v) {
+  if (v == 0) return u;
+  else return gcd(v, u - u/v*v);
+}
+
+void main(void) {
+  int x;  
+  int y;
+
+  y = gcd(x);         /* unmatched number of parameters */
+  y = gcd(x, foo());  /* unmatched parameter types */
+}

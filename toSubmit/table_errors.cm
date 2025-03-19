@@ -1,0 +1,9 @@
+/* undefined error for "temp" and redefined error for "x" in main */
+
+void main(void) {
+  int x;  
+  bool x;
+
+  x = 10;
+  temp = 15;
+}

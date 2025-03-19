@@ -1,0 +1,17 @@
+/* multiple errors related to assignments and op-expressions */
+
+int gcd(int u, int v) {
+  if (v == 0) return u;
+  else return gcd(v, u - u/v*v);
+}
+
+void main(void) {
+  int x;  
+  bool y;
+
+  y = x;      /* error for assignment */
+  y = gcd(x, 5);   /* same as above */
+  x = x + y;  /* error for x + y, and inferred type may affect assignment */
+  x = x + y * 10;  /* error for y * 10, and inferred type may propogate up */
+  y = 3 && x > 5;   /* should be valid since an operand can be either int or bool */
+}
