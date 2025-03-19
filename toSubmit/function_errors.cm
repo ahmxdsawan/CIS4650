@@ -15,5 +15,5 @@ void main(void) {
   int y;
 
   y = gcd(x);         /* unmatched number of parameters */
-  y = gcd(x, foo());  /* unmatched parameter types */
+  y = gcd(x, foo());  /* unmatched parameter types FIX LATER*/
 }

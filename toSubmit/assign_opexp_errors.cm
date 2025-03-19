@@ -13,5 +13,5 @@ void main(void) {
   y = gcd(x, 5);   /* same as above */
   x = x + y;  /* error for x + y, and inferred type may affect assignment */
   x = x + y * 10;  /* error for y * 10, and inferred type may propogate up */
-  y = 3 && x > 5;   /* should be valid since an operand can be either int or bool */
+  y = 3 && x > 5;   /* should be valid since an operand can be either int or bool FIX LATER*/
 }
