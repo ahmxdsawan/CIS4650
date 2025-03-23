@@ -57,17 +57,17 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // Visit a list of declarations.
-    public void visit(ExpList expList, int level) {
+    public void visit(ExpList expList, int level, boolean isAddr) {
         while(expList != null) {
-            expList.head.accept(this, level);
+            expList.head.accept(this, level, isAddr);
             expList = expList.tail;
         }
     }
 
     // Visit an assignment expression.
-    public void visit(AssignExp exp, int level) {
-        exp.lhs.accept(this, level);
-        exp.rhs.accept(this, level);
+    public void visit(AssignExp exp, int level, boolean isAddr) {
+        exp.lhs.accept(this, level, isAddr);
+        exp.rhs.accept(this, level, isAddr);
         
         int lhsType = getExpressionType(exp.lhs);
         int rhsType = getExpressionType(exp.rhs);
@@ -82,30 +82,30 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // Visit a binary operation expression.
-    public void visit(IfExp exp, int level) {
-        exp.test.accept(this, level);
+    public void visit(IfExp exp, int level, boolean isAddr) {
+        exp.test.accept(this, level, isAddr);
         
         int testType = getExpressionType(exp.test);
         if (testType != TypeExp.INT && testType != TypeExp.BOOL) {
             System.err.println("Error: Test condition in if statement must be int or bool at line " + (exp.row + 1) + ", column " + (exp.col + 1));
         }
         
-        exp.thenpart.accept(this, level);
+        exp.thenpart.accept(this, level, isAddr);
         if(exp.elsepart != null) {
-            exp.elsepart.accept(this, level);
+            exp.elsepart.accept(this, level, isAddr);
         }
     }
 
-    public void visit(IntExp exp, int level) {
+    public void visit(IntExp exp, int level, boolean isAddr) {
         
     }
 
     // Visit a binary operation expression.
-    public void visit(OpExp exp, int level) {
+    public void visit(OpExp exp, int level, boolean isAddr) {
         if(exp.left != null)
-            exp.left.accept(this, level);
+            exp.left.accept(this, level, isAddr);
         if(exp.right != null)
-            exp.right.accept(this, level);
+            exp.right.accept(this, level, isAddr);
         
         switch (exp.op) {
             case OpExp.PLUS:
@@ -172,13 +172,13 @@ public class SemanticAnalyzer implements AbsynVisitor {
         }
     }
 
-    public void visit(TypeExp exp, int level) {
+    public void visit(TypeExp exp, int level, boolean isAddr) {
         
     }
 
     // For a variable declaration:
-    public void visit(VarDeclExp exp, int level) {
-        exp.type.accept(this, level);
+    public void visit(VarDeclExp exp, int level, boolean isAddr) {
+        exp.type.accept(this, level, isAddr);
         
         if (exp.size == 0) {
             System.err.println("Error: Array size cannot be 0 at line " + (exp.row + 1) + ", column " + (exp.col + 1));
@@ -193,7 +193,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // For a function declaration:
-    public void visit(FunctionDec exp, int level) {
+    public void visit(FunctionDec exp, int level, boolean isAddr) {
         List<SymbolInfo> paramList = new ArrayList<>();
         
         VarDecList params = exp.params;
@@ -225,12 +225,12 @@ public class SemanticAnalyzer implements AbsynVisitor {
         returnFound = false;
         
         if(exp.params != null) {
-            exp.params.accept(this, level+1);
+            exp.params.accept(this, level+1, isAddr);
         }
         
         // Visit the function body
         if(exp.body != null) {
-            exp.body.accept(this, level + 1);
+            exp.body.accept(this, level + 1, isAddr);
             if (showScopeChanges) {
                 System.out.println(getIndent(scopeLevel) + "Symbol Table Values:");
                 for (SymbolInfo info : symTable.getCurrentScopeSymbols()) {
@@ -253,7 +253,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // For a compound expression:
-    public void visit(CompoundExp exp, int level) {
+    public void visit(CompoundExp exp, int level, boolean isAddr) {
         scopeLevel++;
         if (showScopeChanges) {
             System.out.println(getIndent(scopeLevel-1) + "Entering new block scope");
@@ -261,9 +261,9 @@ public class SemanticAnalyzer implements AbsynVisitor {
         symTable.enterScope();
         
         if(exp.decs != null)
-            exp.decs.accept(this, level+1);
+            exp.decs.accept(this, level+1, isAddr);
         if(exp.exps != null)
-            exp.exps.accept(this, level+1);
+            exp.exps.accept(this, level+1, isAddr);
         
         if (showScopeChanges) {
             System.out.println(getIndent(scopeLevel-1) + "Symbol table at exit from block:");
@@ -278,18 +278,18 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // For a call expression:
-    public void visit(CallExp exp, int level) {
+    public void visit(CallExp exp, int level, boolean isAddr) {
         SymbolInfo funcInfo = symTable.lookup(exp.func);
         if (funcInfo == null) {
             System.err.println("Error: Undefined function '" + exp.func + "' at line " + (exp.row + 1) + ", column " + (exp.col + 1));
             if (exp.args != null) {
-                exp.args.accept(this, level); // Still check argument expressions
+                exp.args.accept(this, level, isAddr); // Still check argument expressions
             }
             return;
         }
         
         if (exp.args != null) {
-            exp.args.accept(this, level);
+            exp.args.accept(this, level, isAddr);
         }
         
         if (funcInfo.parameters != null) {
@@ -337,21 +337,21 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // For a list of expressions.
-    public void visit(WhileExp exp, int level) {
-        exp.test.accept(this, level);
+    public void visit(WhileExp exp, int level, boolean isAddr) {
+        exp.test.accept(this, level, isAddr);
         
         int testType = getExpressionType(exp.test);
         if (testType != TypeExp.INT && testType != TypeExp.BOOL) {
             System.err.println("Error: Test condition in while statement must be int or bool at line " + (exp.row + 1) + ", column " + (exp.col + 1));
         }
         
-        exp.body.accept(this, level);
+        exp.body.accept(this, level, isAddr);
     }
 
     // For a list of return expressions.
-    public void visit(ReturnExp exp, int level) {
+    public void visit(ReturnExp exp, int level, boolean isAddr) {
         if (exp.exp != null) {
-            exp.exp.accept(this, level);
+            exp.exp.accept(this, level, isAddr);
             
             // Check return type matches function declaration
             if (currentFunction != null) {
@@ -375,15 +375,15 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // For a list of VarDecList.
-    public void visit(VarDecList list, int level) {
+    public void visit(VarDecList list, int level, boolean isAddr) {
         while(list != null) {
-            list.head.accept(this, level);
+            list.head.accept(this, level, isAddr);
             list = list.tail;
         }
     }
 
     // For an array variable access.
-    public void visit(IndexVar var, int level) {
+    public void visit(IndexVar var, int level, boolean isAddr) {
         SymbolInfo info = symTable.lookup(var.name);
         if(info == null) {
             System.err.println("Error: Undefined array '" + var.name + "' at line " + (var.row + 1) + ", column " + (var.col + 1));
@@ -391,7 +391,7 @@ public class SemanticAnalyzer implements AbsynVisitor {
             System.err.println("Error: Variable '" + var.name + "' is not an array at line " + (var.row + 1) + ", column " + (var.col + 1));
         }
         
-        var.index.accept(this, level);
+        var.index.accept(this, level, isAddr);
         
         int indexType = getExpressionType(var.index);
         if (indexType != TypeExp.INT) {
@@ -400,18 +400,18 @@ public class SemanticAnalyzer implements AbsynVisitor {
     }
 
     // For a simple variable usage.
-    public void visit(SimpleVar var, int level) {
+    public void visit(SimpleVar var, int level, boolean isAddr) {
         SymbolInfo info = symTable.lookup(var.name);
         if(info == null) {
             System.err.println("Error: Undefined variable '" + var.name + "' at line " + (var.row + 1) + ", column " + (var.col + 1));
         }
     }
 
-    public void visit(NilExp exp, int level) {
+    public void visit(NilExp exp, int level, boolean isAddr) {
         
     }
 
-    public void visit(BoolExp exp, int level) {
+    public void visit(BoolExp exp, int level, boolean isAddr) {
         
     }
     

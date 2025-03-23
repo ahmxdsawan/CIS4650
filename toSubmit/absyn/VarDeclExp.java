@@ -20,7 +20,7 @@ public class VarDeclExp extends Exp {
     this.nestLevel = 0;
   }
   
-  public void accept(AbsynVisitor visitor, int level) {
-    visitor.visit(this, level);
+  public void accept(AbsynVisitor visitor, int level, boolean isAddr) {
+    visitor.visit(this, level, isAddr);
   }
 }

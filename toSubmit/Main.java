@@ -21,6 +21,7 @@ class Main {
       boolean showTree = false;
       boolean showSymbolTable = false;
       String filename = null;
+      boolean genCode = false;
       
       // Process command line arguments
       for (int i = 0; i < argv.length; i++) {
@@ -28,13 +29,15 @@ class Main {
           showTree = true;
         } else if (argv[i].equals("-s")) {
           showSymbolTable = true;
+        } else if (argv[i].equals("-c")) {
+          genCode = true;
         } else {
           filename = argv[i];
         }
       }
 
       if (filename == null) {
-        System.out.println("Usage: java -classpath /usr/share/java/cup.jar:. Main [-a] [-s] filename.cm");
+        System.out.println("Usage: java -classpath /usr/share/java/cup.jar:. Main [-a] [-s] [-c] filename.cm");
         System.exit(1);
       }
       
@@ -52,16 +55,24 @@ class Main {
       if (showTree && result != null) {
          System.out.println("The abstract syntax tree is:");
          AbsynVisitor visitor = new ShowTreeVisitor();
-         result.accept(visitor, 0); 
+         result.accept(visitor, 0, false); 
       }
 
       if (result != null) {
         SemanticAnalyzer analyzer = new SemanticAnalyzer(showSymbolTable);
-        result.accept(analyzer, 0);
+        result.accept(analyzer, 0, false);
         if (showSymbolTable) {
           analyzer.printGlobalScope();
         }
       }
+
+      // If -c option is provided, perform code generation
+      if (genCode && result != null) {
+         CodeGenerator cg = new CodeGenerator("output.tm");
+         cg.generate(result);
+         System.out.println("TM assembly code generated in output.tm");
+      }
+      
     } catch (Exception e) {
       /* do cleanup here -- possibly rethrow e */
       e.printStackTrace();
