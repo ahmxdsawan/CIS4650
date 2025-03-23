@@ -1,5 +1,4 @@
-/* test.cm - A minimal C- program for testing code generation */
-
+/* test.cm - Minimal C- program for testing code generation */
 void main(void) {
     int x;
     x = 3;
