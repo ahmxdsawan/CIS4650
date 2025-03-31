@@ -14,134 +14,241 @@
  10:    LD 7, -1(5)	return to caller
   3:   LDA 7, 7(7)	jump around i/o code
 * End of standard prelude.
-* processing function: main
+* processing var: x
+* Global var x at offset -1
+* processing var: y
+* Global var y at offset -2
+* processing function: f
 * jump around function body here
  12:    ST 0, -1(5)	store return
 * -> compound statement
-* processing local var: x
-* processing local var: fac
+* -> call of function: g
+* -> id
+* looking up id: n
+ 13:    LD 0, -2(5)	load id value
+* <- id
+ 14:    ST 0, -3(5)	store argument value
+ 15:    ST 5, -4(5)	push ofp
+ 16:   LDA 5, -4(5)	push frame
+ 17:    LD 1, 0(5)	load old frame pointer
+ 18:    LD 0, -3(1)	load argument
+ 19:    ST 0, -2(5)	store parameter
+ 20:   LDA 0, 1(7)	load ac with ret ptr
+* Error: Cannot find function address for g
+ 21:    LD 5, 0(5)	pop frame
+* <- call
 * -> assign
 * -> id
-* looking up id: x
- 13:   LDA 0, -2(5)	load id address
+* looking up id: y
+ 22:   LDA 0, -2(6)	load id address
 * <- id
- 14:    ST 0, -4(5)	store lhs address
-* -> call of function: input
- 15:    ST 5, -5(5)	push ofp
- 16:   LDA 5, -5(5)	push frame
- 17:   LDA 0, 1(7)	load ac with ret ptr
- 18:   LDA 7, -15(7)	jump to fun loc
- 19:    LD 5, 0(5)	pop frame
- 20:    LD 1, -4(5)	load lhs address
- 21:    ST 0, 0(1)	assign: store value
-* <- assign
-* -> assign
-* -> id
-* looking up id: fac
- 22:   LDA 0, -3(5)	load id address
-* <- id
- 23:    ST 0, -5(5)	store lhs address
-* -> constant
- 24:   LDC 0, 1(0)	load const
-* <- constant
- 25:    LD 1, -5(5)	load lhs address
- 26:    ST 0, 0(1)	assign: store value
-* <- assign
-* -> while
-* while: jump after body comes back here
+ 23:    ST 0, -4(5)	store lhs address
 * -> op
 * -> id
-* looking up id: x
- 27:    LD 0, -2(5)	load id value
+* looking up id: y
+ 24:    LD 0, -2(6)	load id value
 * <- id
- 28:    ST 0, -6(5)	op: push left
+ 25:    ST 0, -5(5)	op: push left
 * -> constant
- 29:   LDC 0, 1(0)	load const
+ 26:   LDC 0, 1(0)	load const
 * <- constant
- 30:    ST 0, -7(5)	op: push right
- 31:    LD 0, -6(5)	op: load left
- 32:    LD 1, -7(5)	op: load right
- 33:   SUB 0, 0, 1	op compare left-right
- 34:   JGT 0, 2(7)	br if true
- 35:   LDC 0, 0(0)	false case
- 36:   LDA 7, 1(7)	unconditional jmp
- 37:   LDC 0, 1(0)	true case
+ 27:    LD 1, -5(5)	op: load left
+ 28:   SUB 0, 1, 0	op -
 * <- op
-* while: jump to end belongs here
+ 29:    LD 1, -4(5)	load lhs address
+ 30:    ST 0, 0(1)	assign: store value
+* <- assign
+* <- compound statement
+ 31:    LD 7, -1(5)	return to caller
+ 11:   LDA 7, 20(7)	jump around fn body
+* <- fundecl
+* processing function: g
+* jump around function body here
+ 33:    ST 0, -1(5)	store return
 * -> compound statement
 * -> assign
 * -> id
-* looking up id: fac
- 39:   LDA 0, -3(5)	load id address
+* looking up id: m
+ 34:   LDA 0, -2(5)	load id address
 * <- id
- 40:    ST 0, -6(5)	store lhs address
+ 35:    ST 0, -3(5)	store lhs address
 * -> op
 * -> id
-* looking up id: fac
- 41:    LD 0, -3(5)	load id value
+* looking up id: m
+ 36:    LD 0, -2(5)	load id value
 * <- id
- 42:    ST 0, -7(5)	op: push left
+ 37:    ST 0, -4(5)	op: push left
+* -> constant
+ 38:   LDC 0, 1(0)	load const
+* <- constant
+ 39:    LD 1, -4(5)	op: load left
+ 40:   SUB 0, 1, 0	op -
+* <- op
+ 41:    LD 1, -3(5)	load lhs address
+ 42:    ST 0, 0(1)	assign: store value
+* <- assign
+* -> if
+* -> op
 * -> id
-* looking up id: x
+* looking up id: m
  43:    LD 0, -2(5)	load id value
 * <- id
- 44:    ST 0, -8(5)	op: push right
- 45:    LD 0, -7(5)	op: load left
- 46:    LD 1, -8(5)	op: load right
- 47:   MUL 0, 0, 1	op *
+ 44:    ST 0, -4(5)	op: push left
+* -> constant
+ 45:   LDC 0, 0(0)	load const
+* <- constant
+ 46:    LD 1, -4(5)	op: load left
+ 47:   SUB 0, 1, 0	op >
+ 48:   JGT 0, 2(7)	br if true
+ 49:   LDC 0, 0(0)	false case
+ 50:   LDA 7, 1(7)	unconditional jmp
+ 51:   LDC 0, 1(0)	true case
 * <- op
- 48:    LD 1, -6(5)	load lhs address
- 49:    ST 0, 0(1)	assign: store value
+* if: jump to else belongs here
+* -> compound statement
+* -> call of function: f
+* -> id
+* looking up id: m
+ 53:    LD 0, -2(5)	load id value
+* <- id
+ 54:    ST 0, -4(5)	store argument value
+ 55:    ST 5, -5(5)	push ofp
+ 56:   LDA 5, -5(5)	push frame
+ 57:    LD 1, 0(5)	load old frame pointer
+ 58:    LD 0, -4(1)	load argument
+ 59:    ST 0, -2(5)	store parameter
+ 60:   LDA 0, 1(7)	load ac with ret ptr
+ 61:   LDA 7, -50(7)	jump to function f
+ 62:    LD 5, 0(5)	pop frame
+* <- call
+* -> assign
+* -> id
+* looking up id: y
+ 63:   LDA 0, -2(6)	load id address
+* <- id
+ 64:    ST 0, -5(5)	store lhs address
+* -> op
+* -> id
+* looking up id: y
+ 65:    LD 0, -2(6)	load id value
+* <- id
+ 66:    ST 0, -6(5)	op: push left
+* -> constant
+ 67:   LDC 0, 1(0)	load const
+* <- constant
+ 68:    LD 1, -6(5)	op: load left
+ 69:   SUB 0, 1, 0	op -
+* <- op
+ 70:    LD 1, -5(5)	load lhs address
+ 71:    ST 0, 0(1)	assign: store value
 * <- assign
+* -> call of function: g
+* -> id
+* looking up id: m
+ 72:    LD 0, -2(5)	load id value
+* <- id
+ 73:    ST 0, -6(5)	store argument value
+ 74:    ST 5, -7(5)	push ofp
+ 75:   LDA 5, -7(5)	push frame
+ 76:    LD 1, 0(5)	load old frame pointer
+ 77:    LD 0, -6(1)	load argument
+ 78:    ST 0, -2(5)	store parameter
+ 79:   LDA 0, 1(7)	load ac with ret ptr
+ 80:   LDA 7, -48(7)	jump to function g
+ 81:    LD 5, 0(5)	pop frame
+* <- call
+* <- compound statement
+ 52:   JEQ 0, 29(7)	if: jmp to else if test is false
+* <- if
+* <- compound statement
+ 82:    LD 7, -1(5)	return to caller
+ 32:   LDA 7, 50(7)	jump around fn body
+* <- fundecl
+* processing function: main
+* jump around function body here
+ 84:    ST 0, -1(5)	store return
+* -> compound statement
 * -> assign
 * -> id
 * looking up id: x
- 50:   LDA 0, -2(5)	load id address
+ 85:   LDA 0, -1(6)	load id address
 * <- id
- 51:    ST 0, -7(5)	store lhs address
-* -> op
+ 86:    ST 0, -2(5)	store lhs address
+* -> call of function: input
+ 87:    ST 5, -3(5)	push ofp
+ 88:   LDA 5, -3(5)	push frame
+ 89:   LDA 0, 1(7)	load ac with ret ptr
+ 90:   LDA 7, -87(7)	jump to fun loc
+ 91:    LD 5, 0(5)	pop frame
+ 92:    LD 1, -2(5)	load lhs address
+ 93:    ST 0, 0(1)	assign: store value
+* <- assign
+* -> assign
+* -> id
+* looking up id: y
+ 94:   LDA 0, -2(6)	load id address
+* <- id
+ 95:    ST 0, -3(5)	store lhs address
+* -> call of function: input
+ 96:    ST 5, -4(5)	push ofp
+ 97:   LDA 5, -4(5)	push frame
+ 98:   LDA 0, 1(7)	load ac with ret ptr
+ 99:   LDA 7, -96(7)	jump to fun loc
+100:    LD 5, 0(5)	pop frame
+101:    LD 1, -3(5)	load lhs address
+102:    ST 0, 0(1)	assign: store value
+* <- assign
+* -> call of function: g
 * -> id
 * looking up id: x
- 52:    LD 0, -2(5)	load id value
+103:    LD 0, -1(6)	load id value
 * <- id
- 53:    ST 0, -8(5)	op: push left
-* -> constant
- 54:   LDC 0, 1(0)	load const
-* <- constant
- 55:    ST 0, -9(5)	op: push right
- 56:    LD 0, -8(5)	op: load left
- 57:    LD 1, -9(5)	op: load right
- 58:   SUB 0, 0, 1	op -
-* <- op
- 59:    LD 1, -7(5)	load lhs address
- 60:    ST 0, 0(1)	assign: store value
-* <- assign
-* <- compound statement
- 61:   LDA 7, -35(7)	while: absolute jmp to test
- 38:   JEQ 0, 23(7)	while: jmp to end
-* <- while
+104:    ST 0, -4(5)	store argument value
+105:    ST 5, -5(5)	push ofp
+106:   LDA 5, -5(5)	push frame
+107:    LD 1, 0(5)	load old frame pointer
+108:    LD 0, -4(1)	load argument
+109:    ST 0, -2(5)	store parameter
+110:   LDA 0, 1(7)	load ac with ret ptr
+111:   LDA 7, -79(7)	jump to function g
+112:    LD 5, 0(5)	pop frame
+* <- call
 * -> call of function: output
 * -> id
-* looking up id: fac
- 62:    LD 0, -3(5)	load id value
+* looking up id: x
+113:    LD 0, -1(6)	load id value
 * <- id
- 63:    ST 0, -7(5)	save output value
- 64:    ST 5, -8(5)	push ofp
- 65:   LDA 5, -8(5)	push frame
- 66:    LD 1, 0(5)	load old frame pointer
- 67:    LD 0, -7(1)	load saved output value
- 68:    ST 0, -2(5)	store arg for output
- 69:   LDA 0, 1(7)	load ac with ret ptr
- 70:   LDA 7, -64(7)	jump to output routine
- 71:    LD 5, 0(5)	pop frame
+114:    ST 0, -5(5)	save output value
+115:    ST 5, -6(5)	push ofp
+116:   LDA 5, -6(5)	push frame
+117:    LD 1, 0(5)	load old frame pointer
+118:    LD 0, -5(1)	load saved output value
+119:    ST 0, -2(5)	store arg for output
+120:   LDA 0, 1(7)	load ac with ret ptr
+121:   LDA 7, -115(7)	jump to output routine
+122:    LD 5, 0(5)	pop frame
+* -> call of function: output
+* -> id
+* looking up id: y
+123:    LD 0, -2(6)	load id value
+* <- id
+124:    ST 0, -6(5)	save output value
+125:    ST 5, -7(5)	push ofp
+126:   LDA 5, -7(5)	push frame
+127:    LD 1, 0(5)	load old frame pointer
+128:    LD 0, -6(1)	load saved output value
+129:    ST 0, -2(5)	store arg for output
+130:   LDA 0, 1(7)	load ac with ret ptr
+131:   LDA 7, -125(7)	jump to output routine
+132:    LD 5, 0(5)	pop frame
 * <- compound statement
- 72:    LD 7, -1(5)	return to caller
- 11:   LDA 7, 61(7)	jump around fn body
+133:    LD 7, -1(5)	return to caller
+ 83:   LDA 7, 50(7)	jump around fn body
 * <- fundecl
- 73:    ST 5, 0(5)	push ofp
- 74:   LDA 5, 0(5)	push frame
- 75:   LDA 0, 1(7)	load ac with ret ptr
- 76:   LDA 7, -65(7)	jump to main loc
- 77:    LD 5, 0(5)	pop frame
+134:    ST 5, -2(5)	push ofp
+135:   LDA 5, -2(5)	push frame
+136:   LDA 0, 1(7)	load ac with ret ptr
+137:   LDA 7, -54(7)	jump to main loc
+138:    LD 5, 0(5)	pop frame
 * End of execution.
- 78:  HALT 0, 0, 0	
+139:  HALT 0, 0, 0	
