@@ -2,7 +2,7 @@
 /* Missing comma on declaration, invalid character, and missing semicolon on assignment */
 
 void main(void) {
-  int z y;  /* Missing comma error */
+  int z y;  /* Syntactic Error: Missing comma error */
   
   int x;
   int √;        /* Syntactic Error: invalid character √ */

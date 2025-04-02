@@ -1,2 +1,17 @@
-/* This program tests 3 various syntactic and semantic errors: */
-/*  */
+/* This program tests 2 semantic errors: */
+/* While test condition must be int or bool, undefined variable */
+
+void voidFunction(void) {
+  return;
+}
+
+void main(void) {
+  int x;
+
+  while(voidFunction()) {    /* Semantic Error: WHILE Test condition must be int or bool. */
+    output(1000);
+  }
+
+  test = 10 + 5; /* Semantic Error: Undefined variable */
+
+}

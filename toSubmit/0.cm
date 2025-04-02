@@ -1,0 +1,35 @@
+/* This program tests a large number of errors and recovery */
+/* Contains 6 semantic and 2 syntactic errors */
+
+void voidFunction(void) {
+    return;
+}
+
+void main(void) {
+  bool test;
+  int variable;
+  int arr[0];   /* Semantic Error: Array size must be > 0 */
+  int array[10];
+
+  test = true;
+
+  if(voidFunction()) {       /* Semantic Error: IF Test condition must be int or bool. */
+    output(2);
+  }
+
+  while(voidFunction()) {    /* Semantic Error: WHILE Test condition must be int or bool. */
+    output(1000);
+    {
+      int x x; 
+    }            /* Syntactic Error: Invalid variable declaration in compound statement*/
+  }
+
+  test = 10 + 5; /* Semantic Error: Undefined variable */
+
+  foo2flksjd);      /* Syntactic Error: Invalid expression */
+
+  test = 100;       /* Semantic Error: Type mismatch in assignment */
+
+  array[voidFunction()] = 2; /* Semantic Error: Array index must be an integer */
+
+}

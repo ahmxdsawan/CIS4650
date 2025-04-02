@@ -1,4 +1,4 @@
-Checkpoint 1 README File
+Checkpoint 3 README File
 Group 9: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
 
 Note: We used the provided C1-Package for guidance.
@@ -10,11 +10,11 @@ generate an executable program called "Main".
 
   To test source code like "1.cm", type 
 
-    "java -cp /usr/share/java/cup.jar:. Main -a 1.cm" 
+    "java -cp /usr/share/java/cup.jar:. Main 1.cm" 
 
-and the syntax tree will be displayed on the screen.
+and any errors will be displayed.
 
-Remove the "-a" to not display the tree.
+Use the "-a" flag to display the tree.
 Use the "-s" flag to display the symbol table.
 Use the "-c" flag to generate code to an output.tm file.
 
@@ -22,7 +22,7 @@ Use the "-c" flag to generate code to an output.tm file.
 
 Test Instructions
 
-To test the error handling run the following line on files [1,2,3,4,5].cm
+To test the error handling run the following line on files [1,2,3,4,5,6,7,8,9,0].cm
 
     "java -cp /usr/share/java/cup.jar:. Main 1.cm" 
 

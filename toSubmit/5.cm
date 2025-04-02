@@ -14,9 +14,9 @@ void main(void) {
     int y;
 
     x = x * 2 + 1;
-    y = x + foo(); /* Type mismatch in operand */
+    y = x + foo(); /* Semantic Error: Type mismatch in operand */
 
-    foo(x); /* Function call parameter number mismatch */
+    foo(x); /* Semantic Error: Function call parameter number mismatch */
 
-    foo1(x); /* Function call type mismatch */
+    foo1(x); /* Semantic Error: Function call type mismatch */
 }

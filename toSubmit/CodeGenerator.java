@@ -1,3 +1,8 @@
+/*
+  Created by: Nathan Brommersma, Ahmad Sawan, Jacob McKenna
+  File Name: CodeGenerator.java
+*/
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,14 +30,14 @@ public class CodeGenerator implements AbsynVisitor {
     private int highEmitLoc = 0;      // Highest instruction location generated so far
     private PrintWriter code;         // Output writer for the assembly code
 
-    // Additional instance variables for I/O and error handling
-    private int inputEntry;           // Entry address for the input routine
-    private int outputEntry;          // Entry address for the output routine
+    // Additional instance variables for I/O
+    private int inputEntry;
+    private int outputEntry;
     
     // Track the current function for return statements
     private SymbolInfo currentFunction = null;
     
-    // Track variable locations and functions
+    // Track variable locations and functions in hashmap
     private HashMap<String, VariableInfo> varOffsets = new HashMap<>();
     private HashMap<String, FunctionDec> functionTable = new HashMap<>();
 
@@ -397,7 +402,7 @@ public class CodeGenerator implements AbsynVisitor {
             return;
         }
         
-        // *** Evaluate all arguments first ***
+        // Evaluate all arguments first
         int numArgs = 0;
         if (exp.args != null) {
             int argOffset = offset;
@@ -565,7 +570,6 @@ public class CodeGenerator implements AbsynVisitor {
             }
         } else {
             // Local variable
-            
             // Record offset in variables table with isGlobal = false
             varOffsets.put(exp.name, new VariableInfo(offset, false));
             
@@ -584,10 +588,10 @@ public class CodeGenerator implements AbsynVisitor {
         // No code generation needed
     }
 
-    // Type expression - no code generated
+    // Type expression
     @Override
     public void visit(TypeExp exp, int offset, boolean isAddr) {
-        // No code generation needed for type expressions
+        // No code generation needed
     }
 
     // Visit a list of declarations.
@@ -647,9 +651,7 @@ public class CodeGenerator implements AbsynVisitor {
         emitComment("<- subs");
     }
 
-    /* ---------------------------------------------------
-       Method to trigger code generation from an AST
-       --------------------------------------------------- */
+    // Method for code generation
     public void generate(Absyn ast) {
         // Initialize global variables
         mainEntry = -1;
@@ -659,7 +661,7 @@ public class CodeGenerator implements AbsynVisitor {
         functionTable.clear();
                 
         // Generate prelude
-        emitComment("Standard prelude:");
+        emitComment("Prelude:");
         emitRM("LD", GP, 0, 0, "load gp with maxaddress");
         emitRM("LDA", FP, 0, GP, "copy to gp to fp");
         emitRM("ST", AC, 0, 0, "clear location 0");
@@ -669,13 +671,13 @@ public class CodeGenerator implements AbsynVisitor {
         int savedLoc = emitSkip(1);
         
         // Generate I/O routines
-        emitComment("code for input routine");
+        emitComment("input routine");
         inputEntry = emitLoc;
         emitRM("ST", AC, retFO, FP, "store return");
         emitRO("IN", AC, 0, 0, "input");
         emitRM("LD", PC, retFO, FP, "return to caller");
         
-        emitComment("code for output routine");
+        emitComment("output routine");
         outputEntry = emitLoc;
         emitRM("ST", AC, retFO, FP, "store return");
         emitRM("LD", AC, initFO, FP, "load output value");
@@ -688,9 +690,9 @@ public class CodeGenerator implements AbsynVisitor {
         emitRM_Abs("LDA", PC, currentLoc, "jump around i/o code");
         emitRestore();
         
-        emitComment("End of standard prelude.");
+        emitComment("End of prelude.");
         
-        // Generate code for the AST (all declarations and statements)
+        // Generate code for the AST
         ast.accept(this, initFO, false);
         
         // Check if main function was found
@@ -705,8 +707,7 @@ public class CodeGenerator implements AbsynVisitor {
         emitRM("LDA", AC, 1, PC, "load ac with ret ptr");
         emitRM_Abs("LDA", PC, mainEntry, "jump to main loc");
         emitRM("LD", FP, 0, FP, "pop frame");
-        
-        emitComment("End of execution.");
+
         emitRO("HALT", 0, 0, 0, "");
         
         // Close the output file

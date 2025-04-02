@@ -1,0 +1,31 @@
+/* This program tests a large number of errors and recovery */
+/* Contains 4 semantic and 4 syntactic errors */
+
+void foo(void) {
+    return;
+}
+
+int foo1(bool z) {
+    return 1;
+}
+
+void main(void) {
+  int z y;  /* Syntactic Error: Missing comma error */
+  int arr[0];   /* Semantic Error: Array size must be > 0 */
+  int x;
+  int y;
+  int √;        /* Syntactic Error: invalid character √ */
+
+  x = ;         /* Syntactic Error: invalid expression on right side of assignment */
+
+  x = input(); 
+
+  y = x + foo(); /* Semantic Error: Type mismatch in operand */
+
+  foo(x); /* Semantic Error: Function call parameter number mismatch */
+
+  { fosjdfjo }    /* Syntactic Error: invalid compound statement */
+
+  foo1(x); /* Semantic Error: Function call type mismatch */
+
+}
