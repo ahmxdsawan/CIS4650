@@ -1,14 +1,18 @@
 void main(void) {
-  int x; 
-  int fac;
+  int x[4];
+  int i;
 
-  x = input();
-  fac = 1;
+  i = 4;
 
-  while (x > 1) {
-    fac = fac * x;
-    x = x - 1;
+  x[0] = 1;
+  x[1] = 2;
+  x[2] = 3;
+  x[3] = 4;
+  x[4] = 5;
+
+  while (i > 0) {
+    output(x[i]);
+    i = i - 1;
   } 
-  output(x);
-  output(fac);
+
 }
