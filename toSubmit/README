@@ -15,6 +15,8 @@ generate an executable program called "Main".
 and the syntax tree will be displayed on the screen.
 
 Remove the "-a" to not display the tree.
+Use the "-s" flag to display the symbol table.
+Use the "-c" flag to generate code to an output.tm file.
 
   To rebuild the parser, type "make clean" and type "make" again.
 
@@ -60,3 +62,22 @@ Type Checking: For our type checking, we tested various [12345].cm files that we
 to showcase the different types of type checking we added. In those files, we utilized the 
 provided example code snippets from the checkpoint 2 marking scheme document for a 
 head start on what to be testing.
+
+Checkpoint 3 Testing:
+
+Control Structure Testing: For testing control structures, we primarily used the provided 
+fac.cm and booltest.cm files. These two files tested the basic functionality of “if” and the 
+“while” loop. All control structure testing was successful. 
+
+Functions and Recursions: To test functions and recursions, we relied on the two files 
+given from earlier checkpoints: “gcd.cm” and “mutual.cm”. These two programs tested 
+functions and self-recursion, as well as function prototypes. We were able to get the full 
+“gcd.cm” code working; however, we came across an issue with function prototypes while 
+testing “mutual.cm” (More info in 4.2 Limitations). 
+
+Prelude and Finale, Arithmetic, Assignments, Nested Blocks in Functions: Our strategy 
+for testing the other parts of the program were through individual testing files that we 
+created for each part. For example, to test the prelude and finale, we created a program 
+with an empty main and examined the output to ensure that the prelude and finale code 
+generation was working as expected. We followed similar tests for the other portions of the 
+implementation.
