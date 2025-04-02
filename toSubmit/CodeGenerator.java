@@ -109,14 +109,7 @@ public class CodeGenerator implements AbsynVisitor {
         emitLoc = highEmitLoc;
     }
 
-    // Debug helper method
-    private void debug(String message) {
-        System.out.println("DEBUG: " + message);
-    }
-
-    /* ---------------------------------------------------
-       Visitor Methods for Code Generation
-       --------------------------------------------------- */
+    // Visitor Methods for Code Generation
 
     @Override
     public void visit(AssignExp exp, int offset, boolean isAddr) {
@@ -278,10 +271,8 @@ public class CodeGenerator implements AbsynVisitor {
         // Skip over function body initially
         emitComment("jump around function body here");
         int jumpAroundLoc = emitSkip(1);
-        debug("Jump around location for " + exp.name + ": " + jumpAroundLoc);
         
         exp.funaddr = emitLoc;
-        debug("Function address for " + exp.name + ": " + exp.funaddr);
         
         // Add function to the function table
         functionTable.put(exp.name, exp);
@@ -289,7 +280,6 @@ public class CodeGenerator implements AbsynVisitor {
         // Check if this is the main function
         if (exp.name.equals("main")) {
             mainEntry = exp.funaddr;
-            debug("Setting mainEntry to: " + mainEntry);
         }
         
         // Store return address at function entry
@@ -304,7 +294,6 @@ public class CodeGenerator implements AbsynVisitor {
             
             // Store parameter in variable table with isGlobal = false
             varOffsets.put(param.name, new VariableInfo(paramOffset, false));
-            debug("Parameter " + param.name + " at offset " + paramOffset);
             
             paramOffset--;
             params = params.tail;
@@ -319,14 +308,11 @@ public class CodeGenerator implements AbsynVisitor {
         
         // Return to caller
         emitRM("LD", PC, retFO, FP, "return to caller");
-        debug("Return instruction for " + exp.name + " at emitLoc=" + (emitLoc-1));
         
         // Backpatch the jump around function body
         int currentLoc = emitLoc;
-        debug("Current location after " + exp.name + " body: " + currentLoc);
         emitBackup(jumpAroundLoc);
         emitRM_Abs("LDA", PC, currentLoc, "jump around fn body");
-        debug("Backpatched jump around " + exp.name + " to jump to: " + currentLoc);
         emitRestore();
         
         // Restore previous function context
@@ -377,27 +363,22 @@ public class CodeGenerator implements AbsynVisitor {
     @Override
     public void visit(CallExp exp, int offset, boolean isAddr) {
         emitComment("-> call of function: " + exp.func);
-        debug("Processing call to: " + exp.func + " at emitLoc=" + emitLoc);
         
         // Special handling for input/output functions
         if (exp.func.equals("input")) {
-            debug("Input function call");
             emitRM("ST", FP, offset, FP, "push ofp");
             emitRM("LDA", FP, offset, FP, "push frame");
             emitRM("LDA", AC, 1, PC, "load ac with ret ptr");
             emitRM_Abs("LDA", PC, inputEntry, "jump to fun loc");
-            debug("Jumping to input function at: " + inputEntry);
             emitRM("LD", FP, 0, FP, "pop frame");
             return;
         } else if (exp.func.equals("output")) {
-            debug("Output function call");
             if (exp.args != null) {
                 // Evaluate the argument
                 exp.args.head.accept(this, offset, false);
                 
                 // Store value for use after frame change
                 emitRM("ST", AC, offset, FP, "save output value");
-                debug("Stored output value at offset: " + offset);
                 
                 // Setup the new frame
                 emitRM("ST", FP, offset-1, FP, "push ofp");
@@ -413,7 +394,6 @@ public class CodeGenerator implements AbsynVisitor {
                 // Complete the call
                 emitRM("LDA", AC, 1, PC, "load ac with ret ptr");
                 emitRM_Abs("LDA", PC, outputEntry, "jump to output routine");
-                debug("Jumping to output function at: " + outputEntry);
                 emitRM("LD", FP, 0, FP, "pop frame");
             }
             return;
@@ -437,9 +417,7 @@ public class CodeGenerator implements AbsynVisitor {
                 numArgs++;
             }
         }
-        
-        // *** Following the model of the built-in functions ***
-        
+                
         // Setup new frame pointer
         emitRM("ST", FP, offset-numArgs, FP, "push ofp");
         emitRM("LDA", FP, offset-numArgs, FP, "push frame");
@@ -473,7 +451,6 @@ public class CodeGenerator implements AbsynVisitor {
         emitComment("<- call");
     }
 
-    // If statement: generate code for test and branches
     // If statement: generate code for test and branches
     @Override
     public void visit(IfExp exp, int level, boolean isAddr) {
@@ -682,9 +659,7 @@ public class CodeGenerator implements AbsynVisitor {
         currentFunction = null;
         varOffsets.clear();
         functionTable.clear();
-        
-        debug("Starting code generation");
-        
+                
         // Generate prelude
         emitComment("Standard prelude:");
         emitRM("LD", GP, 0, 0, "load gp with maxaddress");
@@ -694,19 +669,16 @@ public class CodeGenerator implements AbsynVisitor {
         // Save location to jump around I/O routines
         emitComment("Jump around i/o routines here");
         int savedLoc = emitSkip(1);
-        debug("Jump around I/O location: " + savedLoc);
         
         // Generate I/O routines
         emitComment("code for input routine");
         inputEntry = emitLoc;
-        debug("Input routine starts at: " + inputEntry);
         emitRM("ST", AC, retFO, FP, "store return");
         emitRO("IN", AC, 0, 0, "input");
         emitRM("LD", PC, retFO, FP, "return to caller");
         
         emitComment("code for output routine");
         outputEntry = emitLoc;
-        debug("Output routine starts at: " + outputEntry);
         emitRM("ST", AC, retFO, FP, "store return");
         emitRM("LD", AC, initFO, FP, "load output value");
         emitRO("OUT", AC, 0, 0, "output");
@@ -714,7 +686,6 @@ public class CodeGenerator implements AbsynVisitor {
         
         // Backpatch jump around I/O routines
         int currentLoc = emitLoc;
-        debug("Current location after I/O routines: " + currentLoc);
         emitBackup(savedLoc);
         emitRM_Abs("LDA", PC, currentLoc, "jump around i/o code");
         emitRestore();
@@ -727,17 +698,14 @@ public class CodeGenerator implements AbsynVisitor {
         // Check if main function was found
         if (mainEntry == -1) {
             System.err.println("Error: main function not found");
-            debug("ERROR: main function not found");
             return;
         }
         
-        debug("Main function found at: " + mainEntry);
         // Generate finale - setup and call to main
         emitRM("ST", FP, globalOffset+ofpFO, FP, "push ofp");
         emitRM("LDA", FP, globalOffset, FP, "push frame");
         emitRM("LDA", AC, 1, PC, "load ac with ret ptr");
         emitRM_Abs("LDA", PC, mainEntry, "jump to main loc");
-        debug("Final jump to main at: " + mainEntry);
         emitRM("LD", FP, 0, FP, "pop frame");
         
         emitComment("End of execution.");
@@ -745,6 +713,5 @@ public class CodeGenerator implements AbsynVisitor {
         
         // Close the output file
         code.close();
-        debug("Code generation complete");
     }
 }

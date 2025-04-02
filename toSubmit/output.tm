@@ -19,178 +19,162 @@
  12:    ST 0, -1(5)	store return
 * -> compound statement
 * processing local var: x
-* processing local var: i
+* processing local var: fac
+* processing local var: test
 * -> assign
 * -> id
-* looking up id: i
- 13:   LDA 0, -7(5)	load id address
+* looking up id: x
+ 13:   LDA 0, -2(5)	load id address
 * <- id
- 14:    ST 0, -8(5)	store lhs address
-* -> constant
- 15:   LDC 0, 4(0)	load const
-* <- constant
- 16:    LD 1, -8(5)	load lhs address
- 17:    ST 0, 0(1)	assign: store value
+ 14:    ST 0, -5(5)	store lhs address
+* -> call of function: input
+ 15:    ST 5, -6(5)	push ofp
+ 16:   LDA 5, -6(5)	push frame
+ 17:   LDA 0, 1(7)	load ac with ret ptr
+ 18:   LDA 7, -15(7)	jump to fun loc
+ 19:    LD 5, 0(5)	pop frame
+ 20:    LD 1, -5(5)	load lhs address
+ 21:    ST 0, 0(1)	assign: store value
 * <- assign
 * -> assign
-* -> subs
- 18:   LDA 0, -2(5)	load array base address
- 19:    ST 0, -9(5)	save array base address
-* -> constant
- 20:   LDC 0, 0(0)	load const
-* <- constant
- 21:    LD 1, -9(5)	load array base address
- 22:   ADD 0, 1, 0	compute element address
-* <- subs
- 23:    ST 0, -9(5)	store lhs address
+* -> id
+* looking up id: fac
+ 22:   LDA 0, -3(5)	load id address
+* <- id
+ 23:    ST 0, -6(5)	store lhs address
 * -> constant
  24:   LDC 0, 1(0)	load const
 * <- constant
- 25:    LD 1, -9(5)	load lhs address
+ 25:    LD 1, -6(5)	load lhs address
  26:    ST 0, 0(1)	assign: store value
 * <- assign
 * -> assign
-* -> subs
- 27:   LDA 0, -2(5)	load array base address
- 28:    ST 0, -10(5)	save array base address
+* -> id
+* looking up id: test
+ 27:   LDA 0, -4(5)	load id address
+* <- id
+ 28:    ST 0, -7(5)	store lhs address
+* -> op
+* -> id
+* looking up id: x
+ 29:    LD 0, -2(5)	load id value
+* <- id
+ 30:    ST 0, -8(5)	op: push left
 * -> constant
- 29:   LDC 0, 1(0)	load const
+ 31:   LDC 0, 1(0)	load const
 * <- constant
- 30:    LD 1, -10(5)	load array base address
- 31:   ADD 0, 1, 0	compute element address
-* <- subs
- 32:    ST 0, -10(5)	store lhs address
-* -> constant
- 33:   LDC 0, 2(0)	load const
-* <- constant
- 34:    LD 1, -10(5)	load lhs address
- 35:    ST 0, 0(1)	assign: store value
-* <- assign
-* -> assign
-* -> subs
- 36:   LDA 0, -2(5)	load array base address
- 37:    ST 0, -11(5)	save array base address
-* -> constant
- 38:   LDC 0, 2(0)	load const
-* <- constant
- 39:    LD 1, -11(5)	load array base address
- 40:   ADD 0, 1, 0	compute element address
-* <- subs
- 41:    ST 0, -11(5)	store lhs address
-* -> constant
- 42:   LDC 0, 3(0)	load const
-* <- constant
- 43:    LD 1, -11(5)	load lhs address
- 44:    ST 0, 0(1)	assign: store value
-* <- assign
-* -> assign
-* -> subs
- 45:   LDA 0, -2(5)	load array base address
- 46:    ST 0, -12(5)	save array base address
-* -> constant
- 47:   LDC 0, 3(0)	load const
-* <- constant
- 48:    LD 1, -12(5)	load array base address
- 49:   ADD 0, 1, 0	compute element address
-* <- subs
- 50:    ST 0, -12(5)	store lhs address
-* -> constant
- 51:   LDC 0, 4(0)	load const
-* <- constant
- 52:    LD 1, -12(5)	load lhs address
- 53:    ST 0, 0(1)	assign: store value
-* <- assign
-* -> assign
-* -> subs
- 54:   LDA 0, -2(5)	load array base address
- 55:    ST 0, -13(5)	save array base address
-* -> constant
- 56:   LDC 0, 4(0)	load const
-* <- constant
- 57:    LD 1, -13(5)	load array base address
- 58:   ADD 0, 1, 0	compute element address
-* <- subs
- 59:    ST 0, -13(5)	store lhs address
-* -> constant
- 60:   LDC 0, 5(0)	load const
-* <- constant
- 61:    LD 1, -13(5)	load lhs address
- 62:    ST 0, 0(1)	assign: store value
+ 32:    LD 1, -8(5)	op: load left
+ 33:   SUB 0, 1, 0	op >
+ 34:   JGT 0, 2(7)	br if true
+ 35:   LDC 0, 0(0)	false case
+ 36:   LDA 7, 1(7)	unconditional jmp
+ 37:   LDC 0, 1(0)	true case
+* <- op
+ 38:    LD 1, -7(5)	load lhs address
+ 39:    ST 0, 0(1)	assign: store value
 * <- assign
 * -> while
 * while: jump after body comes back here
-* -> op
 * -> id
-* looking up id: i
- 63:    LD 0, -7(5)	load id value
+* looking up id: test
+ 40:    LD 0, -4(5)	load id value
 * <- id
- 64:    ST 0, -14(5)	op: push left
-* -> constant
- 65:   LDC 0, 0(0)	load const
-* <- constant
- 66:    LD 1, -14(5)	op: load left
- 67:   SUB 0, 1, 0	op >
- 68:   JGT 0, 2(7)	br if true
- 69:   LDC 0, 0(0)	false case
- 70:   LDA 7, 1(7)	unconditional jmp
- 71:   LDC 0, 1(0)	true case
-* <- op
 * while: jump to end belongs here
 * -> compound statement
-* -> call of function: output
-* -> subs
- 73:   LDA 0, -2(5)	load array base address
- 74:    ST 0, -14(5)	save array base address
-* -> id
-* looking up id: i
- 75:    LD 0, -7(5)	load id value
-* <- id
- 76:    LD 1, -14(5)	load array base address
- 77:   ADD 0, 1, 0	compute element address
- 78:    LD 0, 0(0)	load array element
-* <- subs
- 79:    ST 0, -14(5)	save output value
- 80:    ST 5, -15(5)	push ofp
- 81:   LDA 5, -15(5)	push frame
- 82:    LD 1, 0(5)	load old frame pointer
- 83:    LD 0, -14(1)	load saved output value
- 84:    ST 0, -2(5)	store arg for output
- 85:   LDA 0, 1(7)	load ac with ret ptr
- 86:   LDA 7, -80(7)	jump to output routine
- 87:    LD 5, 0(5)	pop frame
 * -> assign
 * -> id
-* looking up id: i
- 88:   LDA 0, -7(5)	load id address
+* looking up id: fac
+ 42:   LDA 0, -3(5)	load id address
 * <- id
- 89:    ST 0, -15(5)	store lhs address
+ 43:    ST 0, -8(5)	store lhs address
 * -> op
 * -> id
-* looking up id: i
- 90:    LD 0, -7(5)	load id value
+* looking up id: fac
+ 44:    LD 0, -3(5)	load id value
 * <- id
- 91:    ST 0, -16(5)	op: push left
-* -> constant
- 92:   LDC 0, 1(0)	load const
-* <- constant
- 93:    LD 1, -16(5)	op: load left
- 94:   SUB 0, 1, 0	op -
+ 45:    ST 0, -9(5)	op: push left
+* -> id
+* looking up id: x
+ 46:    LD 0, -2(5)	load id value
+* <- id
+ 47:    LD 1, -9(5)	op: load left
+ 48:   MUL 0, 1, 0	op *
 * <- op
- 95:    LD 1, -15(5)	load lhs address
- 96:    ST 0, 0(1)	assign: store value
+ 49:    LD 1, -8(5)	load lhs address
+ 50:    ST 0, 0(1)	assign: store value
+* <- assign
+* -> assign
+* -> id
+* looking up id: x
+ 51:   LDA 0, -2(5)	load id address
+* <- id
+ 52:    ST 0, -9(5)	store lhs address
+* -> op
+* -> id
+* looking up id: x
+ 53:    LD 0, -2(5)	load id value
+* <- id
+ 54:    ST 0, -10(5)	op: push left
+* -> constant
+ 55:   LDC 0, 1(0)	load const
+* <- constant
+ 56:    LD 1, -10(5)	op: load left
+ 57:   SUB 0, 1, 0	op -
+* <- op
+ 58:    LD 1, -9(5)	load lhs address
+ 59:    ST 0, 0(1)	assign: store value
+* <- assign
+* -> assign
+* -> id
+* looking up id: test
+ 60:   LDA 0, -4(5)	load id address
+* <- id
+ 61:    ST 0, -10(5)	store lhs address
+* -> op
+* -> id
+* looking up id: x
+ 62:    LD 0, -2(5)	load id value
+* <- id
+ 63:    ST 0, -11(5)	op: push left
+* -> constant
+ 64:   LDC 0, 1(0)	load const
+* <- constant
+ 65:    LD 1, -11(5)	op: load left
+ 66:   SUB 0, 1, 0	op >
+ 67:   JGT 0, 2(7)	br if true
+ 68:   LDC 0, 0(0)	false case
+ 69:   LDA 7, 1(7)	unconditional jmp
+ 70:   LDC 0, 1(0)	true case
+* <- op
+ 71:    LD 1, -10(5)	load lhs address
+ 72:    ST 0, 0(1)	assign: store value
 * <- assign
 * <- compound statement
- 97:   LDA 7, -35(7)	while: absolute jmp to test
- 72:   JEQ 0, 25(7)	while: jmp to end
+ 73:   LDA 7, -34(7)	while: absolute jmp to test
+ 41:   JEQ 0, 32(7)	while: jmp to end
 * <- while
+* -> call of function: output
+* -> id
+* looking up id: fac
+ 74:    LD 0, -3(5)	load id value
+* <- id
+ 75:    ST 0, -9(5)	save output value
+ 76:    ST 5, -10(5)	push ofp
+ 77:   LDA 5, -10(5)	push frame
+ 78:    LD 1, 0(5)	load old frame pointer
+ 79:    LD 0, -9(1)	load saved output value
+ 80:    ST 0, -2(5)	store arg for output
+ 81:   LDA 0, 1(7)	load ac with ret ptr
+ 82:   LDA 7, -76(7)	jump to output routine
+ 83:    LD 5, 0(5)	pop frame
 * <- compound statement
- 98:    LD 7, -1(5)	return to caller
- 11:   LDA 7, 87(7)	jump around fn body
+ 84:    LD 7, -1(5)	return to caller
+ 11:   LDA 7, 73(7)	jump around fn body
 * <- fundecl
- 99:    ST 5, 0(5)	push ofp
-100:   LDA 5, 0(5)	push frame
-101:   LDA 0, 1(7)	load ac with ret ptr
-102:   LDA 7, -91(7)	jump to main loc
-103:    LD 5, 0(5)	pop frame
+ 85:    ST 5, 0(5)	push ofp
+ 86:   LDA 5, 0(5)	push frame
+ 87:   LDA 0, 1(7)	load ac with ret ptr
+ 88:   LDA 7, -77(7)	jump to main loc
+ 89:    LD 5, 0(5)	pop frame
 * End of execution.
-104:  HALT 0, 0, 0	
+ 90:  HALT 0, 0, 0	
