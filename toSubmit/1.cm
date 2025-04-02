@@ -1,18 +1,32 @@
+/* This program tests variable assignments and arithmetic, as well as functions */
+/* It takes two input integers, and outputs those integers added, subtracted, multiplied, and divided */
+
+int add (int x, int y) {
+  return x + y;
+}
+
+int subtract(int x, int y) {
+  return x - y;
+}
+
+int multiply(int x, int y) {
+  return x * y;
+}
+
+int divide(int x, int y) {
+  return x / y;
+}
+
 void main(void) {
-  int x[4];
-  int i;
+  int a;
+  int b;
 
-  i = 4;
+  a = input();
+  b = input();
 
-  x[0] = 1;
-  x[1] = 2;
-  x[2] = 3;
-  x[3] = 4;
-  x[4] = 5;
-
-  while (i > 0) {
-    output(x[i]);
-    i = i - 1;
-  } 
+  output(add(a, b));
+  output(subtract(a, b));
+  output(multiply(a, b));
+  output(divide(a, b));
 
 }

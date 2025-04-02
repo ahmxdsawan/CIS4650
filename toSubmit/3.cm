@@ -1,21 +1,35 @@
-/* This program tests operand type mismatch and function defs/call mismatch */
+/* This program tests recursive function calling, loops, arithmetic, and if/else */
+/* The program takes a positive integer as input and outputs the fibonacci sequence up to that number */
 
-void foo(void) {
-    return;
-}
+int fib(int n) {
+    int result;
+    int a;
+    int b;
 
-int foo1(bool z) {
-    return 1;
+    result = 0;
+
+    if (n <= 1) {
+        result = n;
+    } else {
+        a = fib(n - 1);
+        b = fib(n - 2);
+        result = a + b;
+    }
+    return result;
 }
 
 void main(void) {
-    int x;
-    int y;
+    int n;
+    int i;
+    int fibValue;
 
-    x = x * 2 + 1;
-    y = x + foo(); /* Type mismatch in operand */
+    n = input();
+    i = 0;
 
-    foo(x); /* Function call parameter number mismatch */
+    while (i < n) {
+        fibValue = fib(i);
+        output(fibValue);
+        i = i + 1;
+    }
 
-    foo1(x); /* Function call type mismatch */
 }

@@ -701,7 +701,7 @@ public class CodeGenerator implements AbsynVisitor {
             return;
         }
         
-        // Generate finale - setup and call to main
+        // finale - setup and call to main
         emitRM("ST", FP, globalOffset+ofpFO, FP, "push ofp");
         emitRM("LDA", FP, globalOffset, FP, "push frame");
         emitRM("LDA", AC, 1, PC, "load ac with ret ptr");

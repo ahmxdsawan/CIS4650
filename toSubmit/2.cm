@@ -1,18 +1,26 @@
-/* This program tests the type checking of assignments and array index type */
+/* This program tests while loops, conditional statements, and global variables */
+/* It takes the size N as input, and then loops to print each number N times */
 
-void foo(void) {
-    return;
+int N;
+
+void printNumber(int num, int count) {
+    int j;
+    j = 0;
+
+    while (j < count) {
+        output(num);
+        j = j + 1;
+    }
 }
 
 void main(void) {
-    int a[2];
-    int test;
-    bool test1;
+    int i;
+    i = 1;
     
-
-    test = true; /* Type mismatch in assignment */
-
-    test1 = 3 + 1; /* Type mismatch in assignment */
-
-    a[foo()] = 2; /* Array index must be an interger */
+    N = input();
+    
+    while (i <= N) {
+        printNumber(i, i);
+        i = i + 1;
+    }
 }
