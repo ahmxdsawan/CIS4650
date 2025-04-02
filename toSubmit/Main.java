@@ -74,7 +74,6 @@ class Main {
       }
       
     } catch (Exception e) {
-      /* do cleanup here -- possibly rethrow e */
       e.printStackTrace();
     }
   }

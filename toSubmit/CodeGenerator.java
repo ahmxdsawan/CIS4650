@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class CodeGenerator implements AbsynVisitor {
 
-    // Register constants for clarity
+    // Register constants for clarity, provided in class
     public static final int PC = 7;
     public static final int GP = 6;
     public static final int FP = 5;
@@ -550,7 +550,7 @@ public class CodeGenerator implements AbsynVisitor {
         emitComment("<- return");
     }
 
-    // Variable declaration: allocate space for variables
+    // Variable declaration: allocate space for variables - Array functionality not working
     @Override
     public void visit(VarDeclExp exp, int offset, boolean isAddr) {
         if (currentFunction == null) {
@@ -621,7 +621,7 @@ public class CodeGenerator implements AbsynVisitor {
     public void visit(IndexVar var, int offset, boolean isAddr) {
         emitComment("-> subs");
         
-        // Get the base address of the array using variable info
+        // Get the base address of the array using variable info - Array functionality not finished
         VariableInfo varInfo = varOffsets.get(var.name);
         if (varInfo != null) {
             int base = varInfo.isGlobal ? GP : FP;
