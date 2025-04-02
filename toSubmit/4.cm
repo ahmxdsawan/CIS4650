@@ -1,16 +1,14 @@
-/* This program tests type checking on conditions */
-
-void foo(void) {
-    return;
-}
+/* This program tests 3 various syntactic errors */
+/* Missing comma on declaration, invalid character, and missing semicolon on assignment */
 
 void main(void) {
-    
-    if(foo()) {       /* Error: Test condition must be int or bool. */
-        output(2);
-    }
-    
-    while(foo()) {    /* Error: Test condition must be int or bool. */
-        output(3);
-    }
+  int z y;  /* Missing comma error */
+  
+  int x;
+  int √;        /* Syntactic Error: invalid character √ */
+
+  x = ;         /* Syntactic Error: invalid expression on right side of assignment */
+
+  x = input(); 
+
 }

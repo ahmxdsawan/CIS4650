@@ -1,0 +1,17 @@
+/* This program tests 3 various syntactic and semantic errors: */
+/* Invalid array size, invaid compound statement, array index must be integer */
+
+void foo(void) {
+    return;
+}
+
+void main(void) {
+    int arr[0];   /* Semantic Error: Array size must be > 0 */
+    int a[2];
+    int test;
+    bool test1;
+    
+    { fosjdfjo }    /* Syntactic Error: invalid compound statement */
+
+    a[foo()] = 2; /* Semantic Error: Array index must be an integer */
+}

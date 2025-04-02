@@ -7,11 +7,11 @@ import java.util.HashMap;
 public class CodeGenerator implements AbsynVisitor {
 
     // Register constants for clarity
-    public static final int PC = 7;   // Program Counter
-    public static final int GP = 6;   // Global Pointer
-    public static final int FP = 5;   // Frame Pointer
-    public static final int AC = 0;   // Accumulator
-    public static final int AC1 = 1;  // Secondary accumulator
+    public static final int PC = 7;
+    public static final int GP = 6;
+    public static final int FP = 5;
+    public static final int AC = 0;
+    public static final int AC1 = 1;
 
     // Offsets for stack frame items
     public static final int retFO = -1;   // Offset for return address
@@ -57,9 +57,7 @@ public class CodeGenerator implements AbsynVisitor {
         }
     }
 
-    /* ---------------------------------------------------
-       Emit routines to generate TM assembly instructions
-       --------------------------------------------------- */
+    // Emit routines to generate TM assembly instructions
 
     // Emit a comment line
     void emitComment(String comment) {

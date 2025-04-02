@@ -156,11 +156,6 @@ var_decl ::= type_specifier:t ID:i SEMI
             | type_specifier:t ID:i LBRACKET NUM:n RBRACKET SEMI
               {: 
                  int size = Integer.parseInt(n);
-                 if (size <= 0) {
-                     parser.report_error("Invalid array size: '" + n + "' - array size must be greater than 0", 
-                                        new java_cup.runtime.Symbol(sym.NUM, nleft, nright, n));
-                     parser.valid = false;
-                 }
                  RESULT = new VarDeclExp(tleft, tright, t, i, size); 
               :}
             | type_specifier:t error SEMI

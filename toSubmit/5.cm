@@ -1,4 +1,5 @@
-/* This program tests a mix of type checking errors */
+/* This program tests 3 various semantic errors: */
+/* Type mismatch in operand, Function call parameter number mismatch, Function call type mismatch */
 
 void foo(void) {
     return;
@@ -8,51 +9,14 @@ int foo1(bool z) {
     return 1;
 }
 
-int calculateSum(int arr[], int size) {
-    int sum;
-    int i;
-    sum = 0;
-    i = 0;
-    while (i < size) {
-        sum = sum + arr[i];
-        i = i + 1;
-    }
-    return sum;
-}
-
 void main(void) {
     int x;
     int y;
-    int numbers[5];
-    int result;
-    bool isPositive;
 
-    /* Correctly initialize the array */
-    numbers[0] = input();
-    numbers[1] = input();
-    numbers[2] = input();
-    numbers[3] = input();
-    numbers[4] = input();
+    x = x * 2 + 1;
+    y = x + foo(); /* Type mismatch in operand */
 
-    result = calculateSum(numbers, 5);
-    output(result);
+    foo(x); /* Function call parameter number mismatch */
 
-    /* Error: Using foo() (which returns void) in an arithmetic expression */
-    y = x + foo();
-
-    /* Error: Calling foo with an argument (foo takes no parameters) */
-    foo(x);
-
-    /* Error: Calling foo1 with an int argument, while foo1 expects a bool */
-    output(foo1(x));
-
-    /* Error: Using foo() as the condition in an if-statement (void cannot be used as condition) */
-    if(foo()) {
-        output(2);
-    }
-
-    /* Error: Using foo() as the condition in a while-statement */
-    while(foo()) {
-        output(3);
-    }
+    foo1(x); /* Function call type mismatch */
 }
