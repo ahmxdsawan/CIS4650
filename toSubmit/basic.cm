@@ -1,0 +1,7 @@
+/* main with expressions and assignments only */
+
+void main(void) {
+  int x;
+  x = 2;
+  x = x + 5;
+}

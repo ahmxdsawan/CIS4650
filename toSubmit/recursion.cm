@@ -1,0 +1,14 @@
+/* A program to compute the factorial value of an integer */
+
+int smaller(int x) {
+  if (x == 0)
+     return 0;
+  else
+     return x + smaller(x - 1);
+}
+
+void main(void) {
+  int x;
+  x = input();
+  output(smaller(x));
+}

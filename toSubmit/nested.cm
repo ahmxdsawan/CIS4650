@@ -1,0 +1,10 @@
+/* Using a local var in a nested block */
+void main(void) {
+   int x;
+   x = 2;
+   if (x > 0) {
+      int t;
+      t = 10;
+      x = x + t;
+   }
+}

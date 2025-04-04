@@ -1,0 +1,4 @@
+/* minimum C- program with an empty main */
+
+void main(void) {
+}
